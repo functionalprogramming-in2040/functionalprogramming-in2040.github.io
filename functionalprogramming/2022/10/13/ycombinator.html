@@ -1,0 +1,688 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Y Y? - IN2040 SICP</title>
+<meta name="description" content="or why Y?">
+
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="IN2040 SICP">
+<meta property="og:title" content="Y Y?">
+<meta property="og:url" content="/functionalprogramming/2022/10/13/ycombinator.html">
+
+
+  <meta property="og:description" content="or why Y?">
+
+
+
+  <meta property="og:image" content="/assets/images/sicp-scale.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2022-10-13T00:00:00+02:00">
+
+
+
+  <meta property="article:modified_time" content="2022-10-10T00:00:00+02:00">
+
+
+
+
+<link rel="canonical" href="/functionalprogramming/2022/10/13/ycombinator.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="IN2040 SICP Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--posts">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          IN2040 SICP
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/menu/official">official</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style=" background-image: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url('/assets/images/sicp-scale.jpg');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Y Y?
+
+        
+      </h1>
+      
+        <p class="page__lead">or why Y?
+</p>
+      
+      
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+
+
+  <div class="archive">
+    
+    <p>This is another post in connection with some slide showed in the lecture, which may have been a bit obscur. As with all these posts, the background information here is <strong>non-pensum</strong>.</p>
+
+<p>It’s triggered by some slide week 09 about```recursion with anonymous procedures’’. The slide showed a version of faculty programmed in a way unlike any we have seen before (and unlike any we will see afterwards). And in fact in a rather obscure way, for most. In fact, it’s programmed <strong>without recursion</strong>, in that there’s no procedure that calls itself. It only uses lambda-expressions, i.e., only <strong>anonymous</strong> functions are used, and since there’s no function with a name, there is no possibility that a procedure can call itself, at least not by its name.</p>
+
+<h1 id="recap-coding-faculty-using-only-anonymous-functions">Recap: Coding faculty using only anonymous functions</h1>
+
+<p>Let’s recap the presentation from the lecture a bit. It is a demonstration that one can program recursion using just anonymous functions. The starting point is the faculty procedure, programmed in the most straightforward recursive way.</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="nv">fac</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	  <span class="mi">1</span>
+	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>This is a recursive definition of <code class="language-plaintext highlighter-rouge">fac</code>. <code class="language-plaintext highlighter-rouge">fac</code> is bound to a lambda abstraction, and in the procedure body, <code class="language-plaintext highlighter-rouge">fac</code> is mentioned and called. Probably we got used to recursive definitions meanwhile that we don’t puzzle about that too much. Perhaps it’s worth to point out one crucial difference between <code class="language-plaintext highlighter-rouge">define</code> and <code class="language-plaintext highlighter-rouge">let</code>. It’s not possible to define <code class="language-plaintext highlighter-rouge">fac</code> using let as follows:</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span>
+    <span class="p">((</span><span class="nv">fac</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+	    <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="mi">1</span>
+		<span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>  <span class="c1">;; not the fac that is</span>
+                                         <span class="c1">;; being introduced via</span>
+                                         <span class="c1">;; let!</span>
+  <span class="nv">&lt;scope</span> <span class="nv">where</span> <span class="nv">fac</span> <span class="nv">is</span> <span class="nv">intended</span> <span class="nv">to</span> <span class="nv">be</span> <span class="nv">used&gt;</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Let</code> works similar as <code class="language-plaintext highlighter-rouge">define</code> (though it has an explicitly specified scope): it binds <code class="language-plaintext highlighter-rouge">fac</code> to this lambda-expression. However, this time it won’t work as intended, as <code class="language-plaintext highlighter-rouge">fac</code> is not yet defined. If you try that example yourself in some scheme interpreter, make sure that <code class="language-plaintext highlighter-rouge">fac</code> has not already been defined earlier, otherwise it will look as if it worked insofar the correct value comes out. But in that case, the <code class="language-plaintext highlighter-rouge">fac</code> introduced via <code class="language-plaintext highlighter-rouge">let</code> simply calls the previously defined <code class="language-plaintext highlighter-rouge">let</code>, it’s not a recursive definition.</p>
+
+<p>While we are at it: there exits a variant of <code class="language-plaintext highlighter-rouge">let</code> which would work, it’s called <code class="language-plaintext highlighter-rouge">letrec</code> and that would allow an intended recursive definition of <code class="language-plaintext highlighter-rouge">fac</code> (and in that respect works analogous to <code class="language-plaintext highlighter-rouge">define</code>).</p>
+
+<p>So far so good. Assume now we don’t want to use <code class="language-plaintext highlighter-rouge">define</code> to program faculty. Nor <code class="language-plaintext highlighter-rouge">letrec</code> obviously, nor <code class="language-plaintext highlighter-rouge">while</code> or other looping constructs that our favorite Scheme dialect may support (<code class="language-plaintext highlighter-rouge">while</code> is supported- Additionally one can program it easily oneself, but that’s not the topic now).</p>
+
+<p>Let’s look at the lambda abstraction in isolation, i.e., the above standard definition just without giving it a name with <code class="language-plaintext highlighter-rouge">define</code>.</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+   <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+       <span class="mi">1</span>
+       <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>Now, we don’t define anything, and the interpreter would anyway probably complain or warn us that <code class="language-plaintext highlighter-rouge">fac</code> is undefined (assuming we have not defined it earlier of course). But it’s just a warning, the base case would work. In other words: doing <code class="language-plaintext highlighter-rouge">((lambda (n) (if (= n 1) 1 (* n (fac (- n 1))))) 1)</code> gives back the faculty of 1. Of course applying it to any other larger than 1 crashes the application, as it tries to call <code class="language-plaintext highlighter-rouge">fac</code>, which is undefined, as we assume.</p>
+
+<p>Of course we would not expect the previous code to do something meaningful, what we need to do in the non-base case is <strong>to call the procedure itself</strong>, which is the lambda-expression itself, not the non-existing function with the tempting name <code class="language-plaintext highlighter-rouge">fac</code>. But the lambda expression has no name, it’s anonymous and we disallowed ourselves to to give it a name with <code class="language-plaintext highlighter-rouge">define</code> or <code class="language-plaintext highlighter-rouge">letrec</code> to call it in the lambda expression.</p>
+
+<p>Now, with <code class="language-plaintext highlighter-rouge">define</code> and <code class="language-plaintext highlighter-rouge">letrec</code> off-limits (and <code class="language-plaintext highlighter-rouge">let</code> useless for our purpose), there is still a mechanism we can use to give a name to a procedure, that’s <strong>lambda</strong>. So let’s try to enclose the above (useless) lambda abstraction with another <code class="language-plaintext highlighter-rouge">lambda</code> and hand over the function. It looks like that:</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="p">)</span>
+   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>Does that help? Not really. Sure, the call to <code class="language-plaintext highlighter-rouge">fac</code> in the body is now defined, as the variable is bound be the outer <code class="language-plaintext highlighter-rouge">lambda</code>. So what we have achieved is that we have a function that takes a function as argument and then a number, then makes case distinction, in the (intended) base case, it gives <code class="language-plaintext highlighter-rouge">1!</code> which is <code class="language-plaintext highlighter-rouge">1</code>. In the (intended) recursion case it does a calculation as expected for faculty and uses the argument function <code class="language-plaintext highlighter-rouge">fac</code> on the decreased numerical input, and assuming it’s not yet defined, it will raise an error.</p>
+
+<p>But just because we named the formal parameter <code class="language-plaintext highlighter-rouge">fac</code> does not make it into the faculty function. We still have not achieved a situation where the abstraction <strong>calls or repeats itself</strong> and thereby turns itself to the faculty function. In particular</p>
+
+<blockquote>
+  <p><strong><code class="language-plaintext highlighter-rouge">fac</code> is an argument to the anonymous function, it’s not the anonymous function itself!</strong></p>
+</blockquote>
+
+<p>Assume for the moment, we somehow could arrange, that the anonymous function is indeed passed as argument as into its own formal parameter <code class="language-plaintext highlighter-rouge">fac</code>. Actually, we will soon arrange just that, and it’s actually not hard.</p>
+
+<p>But assuming that we somehow can pass the previously defined <strong>abstraction as argument to itself</strong>, there’s another problem. Under said assumption, the above code makes no sense, it has a ``type error’’. Of course, Scheme has no static type system, so there’s no type checker around that alerts us to the fact that the code would have a serious defect, one has to wait until one runs it to see the (run-time) type error.</p>
+
+<p>What’s the defect, then? The anonymous function is a higher-order function that takes a function as argument and afterwards can be applied to a number: there a lambda-abstraction with <code class="language-plaintext highlighter-rouge">fac</code> as formal parameter followed by another abstraction with <code class="language-plaintext highlighter-rouge">n</code> as parameter. However, the function call on <code class="language-plaintext highlighter-rouge">fac</code> in the body of the abstraction takes just a number as argument, here <code class="language-plaintext highlighter-rouge">(- n 1)</code>.</p>
+
+<p>That’s a mismatch. But one that is easy to repair, Since we assume that <code class="language-plaintext highlighter-rouge">fac</code> is actually the lambda abstraction, we simply call it properly. It expects a function first and then a number so we don’t call it in the body as <code class="language-plaintext highlighter-rouge">(fac (- n 1))</code>, but call it the way the anonymous function requires it, namely first with a functional argument, namely <code class="language-plaintext highlighter-rouge">fac</code> itself. With that, the previous abstraction is massaged into the following</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="p">)</span>
+	    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+	      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+		  <span class="mi">1</span>
+		  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span>
+		     <span class="p">((</span><span class="nv">fac</span> <span class="nv">fac</span><span class="p">)</span>       <span class="c1">;; &lt;-</span>
+		      <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span><span class="err">))</span>  <span class="c1">;; </span>
+</code></pre></div></div>
+
+<p>To avoid misunderstanding, the previous version did not have a type error, it would have a type error under the assumption that we somehow would be able somehow pass itself as argument into <code class="language-plaintext highlighter-rouge">fac</code>. In itself, there’s nothing wrong with the function type-wise.</p>
+
+<p>But we have not achieved that trick yet, how to pass the abstraction into the formal parameter. Actually, it’s fairly simple.</p>
+
+<p>Note that we are disallowed ourselves to use <code class="language-plaintext highlighter-rouge">define</code> or <code class="language-plaintext highlighter-rouge">letrec</code>, but giving names to functions is still fine. So if we give the code from above a name, then we can use that name to call it <strong>and</strong> at the same time pass it as argument to itself! Let’s ``de-anonymize’’ the higher-order function and give it a name, here <code class="language-plaintext highlighter-rouge">proc</code>:</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">proc</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="o">'</span><span class="p">)</span>
+	       <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+		 <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+		     <span class="mi">1</span>
+		     <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nv">fac</span><span class="o">'</span> <span class="nv">fac</span><span class="o">'</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))))</span>
+  <span class="p">(</span><span class="nv">proc</span> <span class="nv">proc</span><span class="p">))</span>    <span class="c1">;; self application of proc =</span>
+                  <span class="c1">;; self-application of the</span>
+                  <span class="c1">;; (previously) anonymous function</span>
+</code></pre></div></div>
+
+<p>Note that also the formal parameter has been renamed from <code class="language-plaintext highlighter-rouge">fac</code> to <code class="language-plaintext highlighter-rouge">fac'</code>. Not a big deal, actually, <code class="language-plaintext highlighter-rouge">fac</code> would also work, but maybe that’s misleading. The function intended to be passed for that functional formal parameter is the abstraction (in the meantime called <code class="language-plaintext highlighter-rouge">proc</code>), and that’s <strong>not</strong> the faculty function (though of course closely related).</p>
+
+<p>Basically we are done. If one still likes to have the faculty function under its usual name, that’s now child’s play. Let’s use <code class="language-plaintext highlighter-rouge">define</code> to associate the above construction with that name, and then we check if everything worked out fine. Note that there is no recursive use of <code class="language-plaintext highlighter-rouge">fac</code>, so we might also have used <code class="language-plaintext highlighter-rouge">let</code> instead of <code class="language-plaintext highlighter-rouge">define</code>.</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="nv">fac</span>         <span class="c1">;; just give the whole thing the conventional name</span>
+    <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">proc</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="o">'</span><span class="p">)</span>
+		   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+		     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+			 <span class="mi">1</span>
+			 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nv">fac</span><span class="o">'</span> <span class="nv">fac</span><span class="o">'</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))))</span>
+      <span class="p">(</span><span class="nv">proc</span> <span class="nv">proc</span><span class="p">)))</span>
+<span class="p">(</span><span class="nv">fac</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1">; -&gt; 24</span>
+</code></pre></div></div>
+
+<h1 id="to-be-continued">To be continued</h1>
+
+<p>This was reconstruction or analysis of some perhaps puzzling piece of code shown in the lecture, a slightly convoluted way to code one particular recusive function, the good old faculty. That can be generalized and leads to something called <strong>Y-combinator</strong>. As soon as time allows, I might describe the larger context of such combinators, ultimately a fixpoint construction</p>
+
+<p>For the nitpicking mind: of course: + etc are named procedures.</p>
+
+<p>Exercise 4.21.</p>
+
+<p>combinator</p>
+
+<p>fixpoint combinator fixpoint</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+   <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	  <span class="mi">1</span>
+	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+    <span class="nv">n</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h1 id="why-is-it-called-paradocial-operator">Why is it called paradocial operator</h1>
+
+<h1 id="how-to-define-fac-with-y">How to define fac with Y.</h1>
+
+<p>Let’s take the faculty as example. Of course it’s not like Y fac, it’s <code class="language-plaintext highlighter-rouge">Y f = fac</code>. One question is, what is <code class="language-plaintext highlighter-rouge">f</code> and another one is if the situation corresponds to the one shown in the lecture, or is it a different FP combinator implicitly used</p>
+
+<p>First, there are two exquivalent formulations of Y</p>
+
+<p>(nat -&gt; nat) -&gt; nat -&gt; nat</p>
+
+<h1 id="wikipedia-fixed-point-combinators-in-lambda-calculus">Wikipedia Fixed-point combinators in lambda calculus</h1>
+
+<p>In the lecture, of course it’s not the y combinator, but an illustration, Perhaps it’s the illustation what happens when to apply Y to faculty.</p>
+
+<h2 id="the-y-combinator-discovered-by-haskell-b-curry-is-defined-as">The Y combinator, discovered by Haskell B. Curry, is defined as</h2>
+
+<p>Y = λ f . ( λ x . f ( x x ) ) ( λ x . f ( x x ) ) . {\displaystyle Y=λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x))\ .} {\displaystyle Y=λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x))\ .}</p>
+
+<p>Beta reduction of this gives: Y g {\displaystyle Y\ g} Y\ g = ( λ f . ( λ x . f ( x x ) ) ( λ x . f ( x x ) ) ) g {\displaystyle =(λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x)))\ g} =(λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x)))\ g (by definition of Y) = ( λ x . g ( x x ) ) ( λ x . g ( x x ) ) {\displaystyle =(λ x.g\ (x\ x))\ (λ x.g\ (x\ x))} =(λ x.g\ (x\ x))\ (λ x.g\ (x\ x)) (by β-reduction of λf: applied Y to g) = g ( ( λ x . g ( x x ) ) ( λ x . g ( x x ) ) ) {\displaystyle =g\ ((λ x.g\ (x\ x))\ (λ x.g\ (x\ x)))} {\displaystyle =g\ ((λ x.g\ (x\ x))\ (λ x.g\ (x\ x)))} (by β-reduction of λx: applied left function to right function) = g ( Y g ) {\displaystyle =g\ (Y\ g)} =g\ (Y\ g) (by second equality)</p>
+
+<p>Repeatedly applying this equality gives:</p>
+
+<p>Y g = g ( Y g ) = g ( g ( Y g ) ) = g ( … g ( Y g ) … ) {\displaystyle Y\ g=g\ (Y\ g)=g\ (g\ (Y\ g))=g\ (\ldots g\ (Y\ g)\ldots )} {\displaystyle Y\ g=g\ (Y\ g)=g\ (g\ (Y\ g))=g\ (\ldots g\ (Y\ g)\ldots )}</p>
+
+<p>(The equality above should be thought of as a sequence of multi-step β-reductions from left to right. The lambda term g ( Y g ) {\displaystyle g\ (Y\ g)} {\displaystyle g\ (Y\ g)} may not, in general, β-reduce to the term Y g {\displaystyle Y\ g} Y\ g. One can interpret the equality signs as β-equivalences instead of multi-step β-reductions to allow for going in both directions.)</p>
+
+<h4 id="equivalent-definition-of-a-fixed-point-combinator">Equivalent definition of a fixed-point combinator</h4>
+
+<p>This fixed-point combinator may be defined as y, as in</p>
+
+<p>x = f x ∧ y f = x {\displaystyle x=f\ x∧ y\ f=x} {\displaystyle x=f\ x∧ y\ f=x}</p>
+
+<p>An expression for y may be derived using rules from the definition of a let expression. Firstly, using the rule</p>
+
+<p>( ∃ x E ∧ F ) ⟺ let ⁡ x : E in ⁡ F {\displaystyle (∃ xE∧ F)\iff \operatorname {let} x:E\operatorname {in} F} {\displaystyle (∃ xE∧ F)\iff \operatorname {let} x:E\operatorname {in} F}</p>
+
+<p>gives</p>
+
+<p>let ⁡ x = f x in ⁡ y f = x . {\displaystyle \operatorname {let} x=f\ x\operatorname {in} y\ f=x\ .} {\displaystyle \operatorname {let} x=f\ x\operatorname {in} y\ f=x\ .}</p>
+
+<p>Also, using</p>
+
+<p>x ∉ FV ⁡ ( E ) ∧ x ∈ FV ⁡ ( F ) → let ⁡ x : G in ⁡ E F = E ( let ⁡ x : G in ⁡ F ) {\displaystyle x¬ ∈ \operatorname {FV} (E)∧ x∈ \operatorname {FV} (F)→ \operatorname {let} x:G\operatorname {in} E\ F=E\ (\operatorname {let} x:G\operatorname {in} F)} {\displaystyle x¬ ∈ \operatorname {FV} (E)∧ x∈ \operatorname {FV} (F)→ \operatorname {let} x:G\operatorname {in} E\ F=E\ (\operatorname {let} x:G\operatorname {in} F)}</p>
+
+<p>gives</p>
+
+<p>y f = let ⁡ x = f x in ⁡ x . {\displaystyle y\ f=\operatorname {let} x=f\ x\operatorname {in} x\ .} {\displaystyle y\ f=\operatorname {let} x=f\ x\operatorname {in} x\ .}</p>
+
+<p>And then using the eta reduction rule,</p>
+
+<p>f x = y ⟺ f = λ x . y , {\displaystyle f\ x=y\iff f=λ x.y\ ,} {\displaystyle f\ x=y\iff f=λ x.y\ ,}</p>
+
+<p>gives</p>
+
+<p>y = λ f . let ⁡ x = f x in ⁡ x . {\displaystyle y=λ f.\operatorname {let} x=f\ x\operatorname {in} x\ .} {\displaystyle y=λ f.\operatorname {let} x=f\ x\operatorname {in} x\ .}</p>
+
+<h3 id="fact">Fact</h3>
+
+<p>This is also from Wikipedia.</p>
+
+<p>We</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> F f n  = (if (= n 1) 1 (* n (f (- n 1))))
+</code></pre></div></div>
+
+<p>The following is a wish. We want to have some constuction or operator F (or is it Y in the end). Anyway, we want to find two things, <code class="language-plaintext highlighter-rouge">F</code> and <code class="language-plaintext highlighter-rouge">f</code> so that when one applies one to the other. Not very convincing</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> (F f)   def= (lambda (n) (if (= n 1) 1 (* n (f (- n 1)))))
+</code></pre></div></div>
+
+<p>The right hand side is not the faculty. It’s still kind of recursive. And F is not explained (maybe it’s <code class="language-plaintext highlighter-rouge">fix</code> on the next display? No, there is <code class="language-plaintext highlighter-rouge">fix</code> and <code class="language-plaintext highlighter-rouge">F</code></p>
+
+<p>This gives Y F n as</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> fix F n = F (fix F) n = (if (= n 1) 1 (* n (f (- n 1))))
+</code></pre></div></div>
+
+<p>what’s F in the end</p>
+
+<p>fix F n = F ( fix F ) n = ( IsZero ⁡ n ) 1 ( multiply ⁡ n ( ( fix F ) ( pred ⁡ n ) ) ) . {\displaystyle {\begin{aligned}{\textsf {fix}}\ F\ n&amp;=F\ ({\textsf {fix}}\ F)\ n\\&amp;=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (({\textsf {fix}}\ F)\ (\operatorname {pred} \ n)))\ .\end{aligned}}} {\displaystyle {\begin{aligned}{\textsf {fix}}\ F\ n&amp;=F\ ({\textsf {fix}}\ F)\ n\\&amp;=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (({\textsf {fix}}\ F)\ (\operatorname {pred} \ n)))\ .\end{aligned}}}</p>
+
+<p>Setting fix F = fact {\displaystyle {\textsf {fix}}\ F=\operatorname {fact} } {\displaystyle {\textsf {fix}}\ F=\operatorname {fact} } gives</p>
+
+<p>fact ⁡ n = ( IsZero ⁡ n ) 1 ( multiply ⁡ n ( fact ⁡ ( pred ⁡ n ) ) ) . {\displaystyle \operatorname {fact} \ n=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (\operatorname {fact} \ (\operatorname {pred} \ n)))\ .} {\displaystyle \operatorname {fact} \ n=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (\operatorname {fact} \ (\operatorname {pred} \ n)))\ .}</p>
+
+<p>This definition puts F in the role of the body of a loop to be iterated, and is equivalent to the mathematical definition of factorial:</p>
+
+<h3 id="one-more-time-with-pa">One more time with PA</h3>
+
+<p>We don’t know yet that it’s an FPO, so it’s not a good explanation. But anyway.</p>
+
+<p>The following is recursive</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  fac =def (lambda (n) (if ((? n 0) 1 (* n (fac (- n 1)))))
+</code></pre></div></div>
+
+<p>The following is the same one, just ``expanded’’</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  fac =def (lambda (f) (lambda (n) (if ((= n 0) 1 (* n (f (- n 1)))))) fac
+</code></pre></div></div>
+
+<p>Now that’s a <strong>fixpoint</strong> equation (but of course not official Scheme code, mentioning <code class="language-plaintext highlighter-rouge">=def). A fixpoint of some function ~f</code> is a value, for which <code class="language-plaintext highlighter-rouge">f(a) = a</code>, and the above equation stipulates that <code class="language-plaintext highlighter-rouge">fac</code> is a fixpoint of the procedure, which we could give a name, say <code class="language-plaintext highlighter-rouge">F</code></p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="nv">F</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span>
+	    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+	      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+		  <span class="mi">1</span>
+		  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>That is legal Scheme code (except that it’s considered bad style to use capital letters…). <code class="language-plaintext highlighter-rouge">F</code> is a higher-order function in that it takes a functional argument.</p>
+
+<p>As said, when applying <code class="language-plaintext highlighter-rouge">F</code> to the faculty procedure, the result is the faculty procedure itself, i.e., <code class="language-plaintext highlighter-rouge">fac</code> is a fixpoijt of <code class="language-plaintext highlighter-rouge">F</code>. We can check that, by applying <code class="language-plaintext highlighter-rouge">F</code> to fac, and using the <strong>substitution model</strong> to check what happens. So let’s do <code class="language-plaintext highlighter-rouge">(F fac)</code>. Substituting <code class="language-plaintext highlighter-rouge">f</code> by <code class="language-plaintext highlighter-rouge">fac</code> in the body of <code class="language-plaintext highlighter-rouge">F</code> we obtain</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="mi">1</span>
+      <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span><span class="err">))</span>
+</code></pre></div></div>
+
+<p>That’s an anonymous function, a lambda-expression, but it definitely implements faculty; The result for the base case is returned directly, in the non-base case, the calculation is done by <code class="language-plaintext highlighter-rouge">fac</code>. This confirms that <code class="language-plaintext highlighter-rouge">fac</code> is indeed a fixpoint of <code class="language-plaintext highlighter-rouge">F</code> but it’s not a definition of <code class="language-plaintext highlighter-rouge">fac</code>. It assumes it previously defined, typically by a recursive definition, calling itself.</p>
+
+<p>But how can we define <code class="language-plaintext highlighter-rouge">fac</code> without calling it recursively using define (or <code class="language-plaintext highlighter-rouge">letrec</code>)?</p>
+
+<p>What’s needed is a procedure that takes (in this example) the higher-order function <code class="language-plaintext highlighter-rouge">F</code> as argument and returns <code class="language-plaintext highlighter-rouge">fac</code> as <code class="language-plaintext highlighter-rouge">F</code>’s fixpoint as result. As procedure that can do that is called consequently a <strong>fixpoint operator</strong> or <strong>fixpoint combinator</strong>.</p>
+
+<p>The explanation just given contains a slight sloppyness. We know that the given <code class="language-plaintext highlighter-rouge">F</code> has a fix-point, we checked that, and it’s the faculty function. But who said that it has not more than one fix-point, and if so, which one do we want? Let’s not concern us too deeply with that, we simply want to code an operator, that, when applied to <code class="language-plaintext highlighter-rouge">F</code> constructs the recursive function <code class="language-plaintext highlighter-rouge">fac</code> for us, and we don’t loose sleep over the fact that there may be other fixpoints of <code class="language-plaintext highlighter-rouge">F</code>. Indeed, fixpoints are typically not unique, but a proper answer which fixpoint we want requires more theory than we would like to invest in here. But with an approriate amount of theoretical overhead one would see that fixpoint we construct would be the smallest fixpoint.</p>
+
+<p>But then, how? How to find an operator that takes <code class="language-plaintext highlighter-rouge">F</code> ans input and returns</p>
+
+<h3 id="whats-the-connection-of-f-with-the-formulation-in-the-lecture">What’s the connection of <code class="language-plaintext highlighter-rouge">F</code> with the formulation in the lecture?</h3>
+
+<p>Let’s ignore the partial application stuff. What we call <code class="language-plaintext highlighter-rouge">F</code> here is <strong>not</strong> the argument on which the first one is applied.</p>
+
+<p><a href="file:///home/msteffen/cor/teaching/2040/lecturerepository/src/notes/lectures/code/09/facwithoutrec.scm">fac without rec</a>. That also means, the first part (here pa)</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">proc</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+    <span class="nv">proc</span> <span class="nv">proc</span> <span class="nv">n</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>is not the Y combinator. There is the possiblity that the code is the result of the Y operator applied to <code class="language-plaintext highlighter-rouge">F</code>. Below, we have two versions, one the symmetric beta-reduced one. However, we should keep in mind that in the lecture there is no pa, and the argument <code class="language-plaintext highlighter-rouge">n</code> is given</p>
+
+<h3 id="whats-the-connection-of-the-formulation-of-the-lecture-with-here">What’s the connection of the formulation of the lecture with here?</h3>
+
+<h3 id="rest-of-argument-scracht">Rest of argument scracht</h3>
+
+<p>λ f . ( λ y . y y ) ( λ z . f ( z z ) )</p>
+
+<p>Apply <code class="language-plaintext highlighter-rouge">Y</code> to <code class="language-plaintext highlighter-rouge">F</code></p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">Y</span> <span class="nv">F</span> <span class="c1">;; -&gt;</span>
+<span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">y</span><span class="p">)</span>  <span class="nv">y</span> <span class="nv">y</span><span class="p">)</span>  <span class="c1">;;      λ f . ( λ y . y   y )   ( λ z . f   ( z   z ) )</span>
+	      <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">))))))</span>
+ <span class="nv">F</span><span class="err">)</span>
+<span class="c1">;; &lt;-&gt;</span>
+<span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))))</span>  <span class="c1">;;   λ f . ( λ z . f   ( z   z ) )   ( λ z . f   ( z   z ) ) 	</span>
+<span class="c1">;; &lt;-&gt;</span>
+<span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">))))))</span>
+
+<span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">f</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))</span> <span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))))</span>
+<span class="c1">;; &lt;-&gt;</span>
+
+  
+</code></pre></div></div>
+
+<p>What is currentl</p>
+
+<h3 id="derivation-of-the-y-combinator">Derivation of the Y combinator</h3>
+
+<p>Starting with,</p>
+
+<p>λ f . let ⁡ x = f x in ⁡ x , {\displaystyle λ f.\operatorname {let} x=f\ x\operatorname {in} x\ ,} {\displaystyle λ f.\operatorname {let} x=f\ x\operatorname {in} x\ ,}</p>
+
+<p>A lambda abstraction does not support reference to the variable name, in the applied expression, so x must be passed in as a parameter to x. We can think of this as replacing x by x x, but formally this is not correct. Instead defining y by ∀ z , y z = x {\displaystyle ∀ z,y\ z=x} ∀ z,y\ z=x gives</p>
+
+<p>λ f . let ⁡ y z = f ( y z ) in ⁡ y z . {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ z\ .} {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ z\ .}</p>
+
+<p>The let expression may be regarded as the definition of the function y, where z is the parameter. Instantiation z as y in the call gives</p>
+
+<p>λ f . let ⁡ y z = f ( y z ) in ⁡ y y . {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ y\ .} {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ y\ .}</p>
+
+<p>And, because the parameter z always passes the function y,</p>
+
+<p>λ f . let ⁡ y z = f ( z z ) in ⁡ y y . {\displaystyle λ f.\operatorname {let} y\ z=f\ (z\ z)\operatorname {in} y\ y\ .} {\displaystyle λ f.\operatorname {let} y\ z=f\ (z\ z)\operatorname {in} y\ y\ .}</p>
+
+<p>Using the eta reduction rule,</p>
+
+<p>f x = y ≡ f = λ x . y , {\displaystyle f\ x=y≡ f=λ x.y\ ,} {\displaystyle f\ x=y≡ f=λ x.y\ ,}</p>
+
+<p>gives</p>
+
+<p>λ f . let ⁡ y = λ z . f ( z z ) in ⁡ y y . {\displaystyle λ f.\operatorname {let} y=λ z.f\ (z\ z)\operatorname {in} y\ y\ .} {\displaystyle λ f.\operatorname {let} y=λ z.f\ (z\ z)\operatorname {in} y\ y\ .}</p>
+
+<p>A let expression may be expressed as a lambda abstraction; using</p>
+
+<p>n ∉ F V ( E ) → ( let ⁡ n = E in ⁡ L ≡ ( λ n . L ) E ) {\displaystyle n¬ ∈ FV(E)→ (\operatorname {let} n=E\operatorname {in} L≡ (λ n.L)\ E)} {\displaystyle n¬ ∈ FV(E)→ (\operatorname {let} n=E\operatorname {in} L≡ (λ n.L)\ E)}</p>
+
+<p>gives</p>
+
+<p>λ f . ( λ y . y y ) ( λ z . f ( z z ) ) . {\displaystyle λ f.(λ y.y\ y)\ (λ z.f\ (z\ z))\ .} {\displaystyle λ f.(λ y.y\ y)\ (λ z.f\ (z\ z))\ .}</p>
+
+<p>This is possibly the simplest implementation of a fixed-point combinator in lambda calculus. However, one beta reduction gives the more symmetrical form of Curry’s Y combinator:</p>
+
+<p>λ f . ( λ z . f ( z z ) ) ( λ z . f ( z z ) ) . {\displaystyle λ f.(λ z.f\ (z\ z))\ (λ z.f\ (z\ z))\ .} {\displaystyle λ f.(λ z.f\ (z\ z))\ (λ z.f\ (z\ z))\ .}</p>
+
+<p>See also Translating between let and lambda expressions.</p>
+
+<h1 id="text">Text</h1>
+
+<p>Of course, also in the example, the second function being used, also in the fac example, is not <code class="language-plaintext highlighter-rouge">fac</code>. That cannot be, of course.</p>
+
+<p>The type is <code class="language-plaintext highlighter-rouge">(Nat -&gt; Nat) -&gt; Nat -&gt; Nat</code></p>
+
+<h1 id="the-fac-with-the-y-combinator">The fac with the Y combinator</h1>
+
+<p>We should also do that</p>
+
+<h2 id="would-it-be-the-same-same-function-to-the-y">Would it be the same same function to the Y?</h2>
+
+<h2 id="question-is-there-a-connection-to-recursion-through-the-heap">QUESTION is there a connection to recursion through the heap?</h2>
+
+<p>Is it worth exploring it?</p>
+
+
+<ul class="taxonomy__index">
+  
+  
+    <li>
+      <a href="#2022">
+        <strong>2022</strong> <span class="taxonomy__count">4</span>
+      </a>
+    </li>
+  
+</ul>
+
+
+
+
+  <section id="2022" class="taxonomy__section">
+    <h2 class="archive__subtitle">2022</h2>
+    <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2022/12/21/evaluationstrategies.html" rel="permalink">Evaluation strategies
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2022/10/13/ycombinator.html" rel="permalink">Y Y?
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">or why Y?
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2022/07/07/ackermann.html" rel="permalink">Recursion, primitive or otherwise
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">A lesser known fact on Ackermann’s function
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2022/06/17/fpwelcome-2022.html" rel="permalink">Welcome to Functional programming (IN2040), autumn 2022
+</a>
+      
+    </h2>
+    
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to Top &uarr;</a>
+  </section>
+
+
+  </div>
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 IN2040 SICP. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+  </body>
+</html>

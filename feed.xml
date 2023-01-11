@@ -1,0 +1,681 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-01-11T10:01:42+01:00</updated><id>/feed.xml</id><title type="html">IN2040 SICP</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><entry><title type="html">Evaluation strategies</title><link href="/functionalprogramming/2022/12/21/evaluationstrategies.html" rel="alternate" type="text/html" title="Evaluation strategies" /><published>2022-12-21T00:00:00+01:00</published><updated>2022-06-18T00:00:00+02:00</updated><id>/functionalprogramming/2022/12/21/evaluationstrategies</id><content type="html" xml:base="/functionalprogramming/2022/12/21/evaluationstrategies.html"><![CDATA[<p>The post is about <strong>evaluation strategies</strong>. The concept was discussed in the lecture (in week 2) and in SICP. Epecially <strong>applicative order</strong> evaluation is covered, as the standard evaluation strategy of scheme. Also, an alternative to that is discussed, namely <strong>normal order</strong> evaluation, and that’s done in connection with things that show up later in the lecture, namely delayed evaluation, streams, and also in the context of the meta-circular evaluator. That’s a scheme interpreter written in scheme and for that it will be discussed what needs to be done to have a non-standard interpreter, namely one that does normal order evaluation.</p>
+
+<blockquote>
+  <p>But what’s evaluation anyway? And why does one need a strategy for that?</p>
+</blockquote>
+
+<h1 id="values-evaluation-and-execution">Values, evaluation, and execution</h1>
+
+<p><em>Evaluation</em> means to determine the <strong>value</strong> of something (like ``e-<strong>value</strong>-ation’’), for us, the value of an expression or of (a part of) a program. The concept of evaluation is eminently functional; in absence of side effects, the value of an expression, in particular of function applications, is independent on when its evaluated, it does not depend on some state (which may change) and so it’s always the same. That property is also known as <strong>referential transparency</strong>. Since the value of a expression is always the same means, an expression represents nothing else than the value, it’s only not yet calculated. Like: <code class="language-plaintext highlighter-rouge">(fac 5)</code> <strong>is</strong> the same as 120, though <code class="language-plaintext highlighter-rouge">(fac 5)</code> is an unevaluated expression, and <code class="language-plaintext highlighter-rouge">120</code> is an evaluated expression (there’s nothing more to do): in ordinary language, we simply say</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">(fac 5)</code> <strong>is</strong> 120</p>
+</blockquote>
+
+<p>or write as equation</p>
+
+<blockquote>
+  <p>5! = 120</p>
+</blockquote>
+
+<p>which is shorter than to say 120 is <strong>the value of</strong> <code class="language-plaintext highlighter-rouge">(fac 5)</code> (or of 5!). One can speak of ``the’’ value of an expression, as opposed of “a” value of an expression, as in the absence of non-determinism (random effects), there cannot be more than one value. Those observations are also underlying the <strong>substitution model</strong> from the lecture. Actually, not just from the lecture: substitution as explanation what happens when executing a program works as long as the program is purely functional, in Scheme or another languages. Substitution means replacements, and if two things are ``the same’’, one can replace one by the other without that it changes anything. For instance, if one calls a procedure, say <code class="language-plaintext highlighter-rouge">square</code> on <code class="language-plaintext highlighter-rouge">(fac 5)</code> as argument, then it in a way does not matter if the body of <code class="language-plaintext highlighter-rouge">square</code> does its calculating on <code class="language-plaintext highlighter-rouge">(fac 5)</code>, the unevaluated argument expression, or on 120, because both represent the same value (namey 120). And evaluating <code class="language-plaintext highlighter-rouge">(fac 5)</code> before handing over the calculating formal parameter <code class="language-plaintext highlighter-rouge">x</code>. And referential transparence guarantees that it does not matter when <code class="language-plaintext highlighter-rouge">(fac 5)</code> is being evaluated to 120, beforehand, i.e. before handing it over to <code class="language-plaintext highlighter-rouge">square</code> or handing over <code class="language-plaintext highlighter-rouge">(fac 5)</code> unevaluated, and let it be evaluated when evaluating the body. But in either case, substitution</p>
+
+<p>Evaluation thus refers to the ``execution mechanism’’ for purely functional programs and expressions. Sometimes one calls evaluation also <em>reduction</em>, like that an unevaluated expression such as <code class="language-plaintext highlighter-rouge">(fac 5)</code> is reduced in a number of steps closer and closer to it ultimate value.</p>
+
+<p>Of course, also imperative programs need to be executed. Those are not primarily run to obtain their value, but for their side effects. Sometimes they don’t even result in a value, but are executed for side effects only.</p>
+
+<p>Later in the lecture, we encounter <code class="language-plaintext highlighter-rouge">set!</code>, which assigns a value to a variable. Assuming that a variable <code class="language-plaintext highlighter-rouge">x</code> is introduced (via <code class="language-plaintext highlighter-rouge">define</code>, via <code class="language-plaintext highlighter-rouge">let</code>, or as formal parameter) and has some value, then <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> <strong>changes</strong> the value or content of <code class="language-plaintext highlighter-rouge">x</code> and replaces it via the value increased by one.</p>
+
+<p>The shown expression <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> in Scheme has <strong>no</strong> value, i.e., it’s executed for its side effect alone, and doing something like</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">*</span> <span class="mi">10</span> <span class="p">(</span><span class="nv">set!</span> <span class="nv">x</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">x</span> <span class="mi">1</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>is meaningless i.e., leads to a run-time error. Being a functional language at its very core, imperative aspects take a bit of a back-seat in Scheme/Lisp, and thus the syntax for assignment is specially marked by <code class="language-plaintext highlighter-rouge">!</code> (“bang”), at least in the Scheme dialect, as a warning sign to the programmer, not to expect referential transparency here.</p>
+
+<p>Of course, there are many languages that are not centered around procedures, functions etc. but are imperative at their core. Most widely used programming languages, including object-oriented ones, are imperative. Destructive assignment is take so much for granted in most languages that it often does not even specifically mentioned, like ``let’s introduce assignment as destructive operation’’, the qualifier ``destructive’’ will not show up in any textbook about Java, maybe not even ``imperative’’. Also the syntax for assignment is typically less conspicuous. Since imperative operations are just the standard way of programming there’s not need to highlight them with a warning <code class="language-plaintext highlighter-rouge">!</code>, and so <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> is just written as <code class="language-plaintext highlighter-rouge">x = x+1</code>, using <code class="language-plaintext highlighter-rouge">=</code> as symbol for assignment.</p>
+
+<p>As a side remark: Especially disciples of functional programing find it unfortunate that the equality sign <code class="language-plaintext highlighter-rouge">=</code> is (mis-)used in many languages for something that is not equality, but imperative assignment. For example, in C-like languages, <code class="language-plaintext highlighter-rouge">==</code> represents equality, and <code class="language-plaintext highlighter-rouge">=</code> represents assignment, but there are other languages, where assignment may be written <code class="language-plaintext highlighter-rouge">:=</code> or similar.</p>
+
+<p>Back to evaluation and execution: as explained, some programs result in no value but are executed for their side-effects only, some have side effects and result in a value, and some, purely functional ones, have only a value and no side-effects. Details, what gives a value and what not may differ from language to language. For instance, as said, <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> does not result in a value in Scheme (of course the sub-expression <code class="language-plaintext highlighter-rouge">(+ x 1)</code> has a value, depending on the content of <code class="language-plaintext highlighter-rouge">x</code>), but in other languages, for instance Java and C, the corresponding assignment <code class="language-plaintext highlighter-rouge">x = x+1</code> has not only a side-effect, changing <code class="language-plaintext highlighter-rouge">x</code> but <strong>also</strong> results in a value. Consequently, one can use constructs like</p>
+
+<pre><code class="language-C">  y = (* 10 (x = x + 1))
+</code></pre>
+
+<p>even though it might not be a recommended coding style.</p>
+
+<p>value of everything and the cost of nothing</p>
+
+<h1 id="what-about-strategies">What about strategies?</h1>
+
+<p>Now that we know what evaluation is, determining the value of a (purely functional) piece of code and we know that in the presence of side-effects, one more typically speaks about execution instead (``running the program’’). But why do we talk about strategies, especially evaluation strategies?</p>
+
+<p>One speaks of strategies in situations when one faces <strong>choices</strong>, how to proceed, and a strategy is a plan how to make those choices. As an example from a different field, given the task to explore a graph, one can do that in different ways, for instance following a strategy of <em>depth-first</em> traversal, or <em>breadth-first</em>, to name the two most prominent strategies. The depth-first strategy, after exploring one edge , faces the choice how to proceed: to explore subsequent edges first, or explore alternative, ``sibling’’ edges first. Depth-first traversal consistently targets the subsequent edges first.</p>
+
+<p>For evaluation, let’s look at a simple example, like</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(6 + 4) - (5 * 2)
+</code></pre></div></div>
+
+<p>or</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nb">-</span> <span class="p">(</span><span class="nb">+</span> <span class="mi">6</span> <span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="nb">*</span> <span class="mi">5</span> <span class="mi">2</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>in Scheme notation. The value of the expression obviously is 0, and it’s easy enough to calculate, i.e, easy enough to evaluate. However, thinking of the evaluation as a step-by-step process, one has a choice to either calculate <code class="language-plaintext highlighter-rouge">6 + 4</code> first and <code class="language-plaintext highlighter-rouge">5 * 2</code> afterwards (and then building the difference), or the other way around. Actually, if one had one interperter of compiler using parallelism, one could even have the left and the right subexpression evaluated <strong>in parallel</strong> (something we don’t really touch upon in the lecture)</p>
+
+<h2 id="but-does-it-matter">But does it matter?</h2>
+
+<p>That’s a legitimate question, and the answer is: yes and no. Looking at the above simple numeric expression, the outcome is 0, independent of whether one calculates <code class="language-plaintext highlighter-rouge">6 + 4</code> before <code class="language-plaintext highlighter-rouge">5 * 2</code>, or the other way around. That’s what referential transparency is about: the value of, for instance <code class="language-plaintext highlighter-rouge">6 + 4</code>, namely 10, is independent from whether it’s calculated before <code class="language-plaintext highlighter-rouge">5 * 2</code> or afterward (or in parallel …), so in that sense the evaluation strategy or order does not matter. Of course, an interpreter will choose typically a particular order, like evaluating expressions like the one shown from left to right. Or a compiler realized the same evaluation order, generating (machine) code that calculates the result of the left subexpression before it calculates that of the one on the right (and before calculating the end-result), since it has to calculate them in <em>some</em> order (if not parallelizing the task and using some multi-core architecture or similar) .</p>
+
+<p>That was argumentation that the evaluation strategy does not matter, at least is such purely functional or mathematical expressions, but actually the numerical example does not even touch on the two strategies mentioned above, applicative order vs. normal order. The reason being that the example does not really uses procedures, at least not user-define ones, but calls only primitive procedures or operations, like <code class="language-plaintext highlighter-rouge">+</code> that do whatever needs to be done, without that one knows how they do it or how their procedure body looks like. Perhaps an operation using <code class="language-plaintext highlighter-rouge">+</code> is not even evaluated inside Scheme or the programming language , but handed over ultimately to some arithmetic hardware.</p>
+
+<p>As said, strategy is about making choices, and the ``evaluatate subexpressions or arguments to a procedure from left to right’’ is a “strategic” choice that was not even mentioned in the lecture. Simply because it’s not really relevant. A left-to-right version of Scheme (or some other language) is not different from a right-to-left version, at least not in any relevant way that would justify to give it special attention or names like ``l-order evaluation’’ or ``r-order evaluation’’. Of course, in a language with side-effects, calling a function on arguments, where the argument have side-effects or using expressions where subexpressesions have side effects, it matters insofar as changing the order of evaluating the arguments may well change the outcome. Indeed, some imperative programming language explicitly <em>specify</em> that the order of evaluating the arguments of a procedure is <em>unspecified</em>. In other words, a programmer should not rely on that arguments are evaluated from left to right. For arguments without side-effects it would not matter anyhow, and arguments with side effects are bad coding style anyway. And as said initially, the word “evaluation” is best use for side-effect-free expressions anyway, as only then one is interested exlusively in an expression’s value. With side-effects the word ``evaluation’’ and thus evaluation strategy is not too fitting anyway.</p>
+
+<p>The strategic decision connected to the evaluation order does not regulate what happens if a procedure has multiple argumets (that’s a boring decision, as argued), but</p>
+
+<blockquote>
+  <p>when to evaluated an argument in a procedure application or function call (resp. the arguments of the application, if there are more than one)</p>
+</blockquote>
+
+<p>Let’s take the examle of the square-function. In Scheme, it’s plausibly defined as</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">square</span> <span class="nv">n</span><span class="p">)</span> <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="nv">n</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>a purely functional procedure with one formal parameter. We may apply that to a <code class="language-plaintext highlighter-rouge">(fac 5)</code>, like</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="nf">square</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>The argument <code class="language-plaintext highlighter-rouge">(fac 5)</code> represents <code class="language-plaintext highlighter-rouge">120</code> its only not evaluated yet. One strategic decision is, that when applying a function to an unevaluated argument, one needs to evaluate the argument first, and evaluate the body afterwards, with the formal parameter replaced (= <strong>substituted</strong>) by the value. In the above example, the argument evaluates, as said, to <code class="language-plaintext highlighter-rouge">120</code> and replacing <code class="language-plaintext highlighter-rouge">n</code> by that value in the body of <code class="language-plaintext highlighter-rouge">square</code> yields</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nb">*</span> <span class="mi">120</span> <span class="mi">120</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>That’s not yet evaluated, and requires one mutliplication to reach the correponding value <code class="language-plaintext highlighter-rouge">14400</code>.</p>
+
+<p>That’s how <strong>applicative order</strong> chooses to handle arguments in an application, namely evaluate them first. Alternatively, one can hand over the argument <code class="language-plaintext highlighter-rouge">(fac 5)</code> unevaluated, i.e. substituting the formal parameter in the body by <code class="language-plaintext highlighter-rouge">(fac 5)</code>, yielding</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nb">*</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">)</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>That requires a number of evaluation or reduction steps, one needs to calculate <code class="language-plaintext highlighter-rouge">(fac 5)</code>, actually one needs to calculate it two times, before <code class="language-plaintext highlighter-rouge">*</code> can do its thing. To leave unevaluated arguments unevaluated, but hands them over as is, that’s <strong>normal order</strong> evaluation</p>
+
+<p>Note that that last step in the normal order evaluatation example assumes that <code class="language-plaintext highlighter-rouge">*</code> is not a standard procedure, since the arguments <code class="language-plaintext highlighter-rouge">(fac 5)</code> are evaluated before being multiplied. While <code class="language-plaintext highlighter-rouge">square</code> in the example illustrates normal order evaluation, the multiplication is assumed to be built-in and is assumed to multiply numbers, i.e., numeric <strong>values</strong>, not unevaluated numeric expressions. We could alternatively assume that multiplication is not built-in, for instance implemented by a procedure <code class="language-plaintext highlighter-rouge">multiply</code> as follows (for simplicity, it works for non-negative arguments <code class="language-plaintext highlighter-rouge">n</code> only):</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">multiply</span> <span class="nv">n</span> <span class="nv">m</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="mi">0</span>
+      <span class="p">(</span><span class="nb">+</span> <span class="nv">m</span> <span class="p">(</span><span class="nf">multiply</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span> <span class="nv">m</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>With that <code class="language-plaintext highlighter-rouge">square</code> would be defined by <code class="language-plaintext highlighter-rouge">(define (square n) (multiply n n))</code> and calling <code class="language-plaintext highlighter-rouge">(square (fac 5))</code> leads with applicative order to</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nf">multiply</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">)</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>which in turn leads to</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">)</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="mi">0</span>
+    <span class="p">(</span><span class="nb">+</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">)</span> <span class="p">(</span><span class="nf">multiply</span> <span class="p">(</span><span class="nb">-</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">)</span> <span class="mi">1</span><span class="p">)</span> <span class="p">(</span><span class="nf">fac</span> <span class="mi">5</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>One could continue from here, doing further steps. It would require to remember that <code class="language-plaintext highlighter-rouge">if</code> is a special form, not a standard procedure, and thus the rules of applicative or normal order don’t apply in their pure form. If we did the same for <code class="language-plaintext highlighter-rouge">+</code> as we did for <code class="language-plaintext highlighter-rouge">*</code> namely redefining it maybe calling it <code class="language-plaintext highlighter-rouge">plus</code>, the evaluation would continue substituting unevalued expressions to <code class="language-plaintext highlighter-rouge">plus</code> and the other functions. But I won’t do a further exploration of the normal order evaluation process on the example here, coming back to the initual question: AO or NO, does it matter?</p>
+
+<p>In some way, no, it does not matter. Like in the example before, where left-to-right or right-to-left evaluation of subexpressions did not matter, also for the strategic choice between AO vs NO in the example <code class="language-plaintext highlighter-rouge">(square (fac 5))</code> does not matter, <strong>as far as the resulting value is concerned</strong>, namely <code class="language-plaintext highlighter-rouge">14400</code>. That’s a general observation for purely functional programs: if the program results in a value under AO and under NO, it’s the same value.</p>
+
+<p>In other ways, the choice between AO and NO does indeed matter! The end-value may be the same, but the two strategies make different choices how to get there and that could mean, some strategy may get there quicker. The <code class="language-plaintext highlighter-rouge">square</code> example is a good illustration of that. It multiplies in its body <code class="language-plaintext highlighter-rouge">(* n n)</code> the argument <code class="language-plaintext highlighter-rouge">n</code> with itself. If, following NO, one hands over an unevaluated expression, like <code class="language-plaintext highlighter-rouge">(fac 5)</code> it means that <code class="language-plaintext highlighter-rouge">(fac 5)</code> needs to be evaluated (at least) two times, maybe more, if one uses a self-made <code class="language-plaintext highlighter-rouge">multiply</code> instead of the built-in <code class="language-plaintext highlighter-rouge">*</code>. For NO, the argument is evaluated qonly once, namely before handing it over to the caller. To avoid the potential performance penalty of repeatedly evaluated an expression, one could of course use <strong>memoization</strong> and the combination of NO and memoization is called <strong>lazy evaluation</strong>. Memoization can be used with AO as well, but it’s less urgent there, and there seems no specific word for that combination.</p>
+
+<p>Of course, evaluating an argument only later, when unavoidable, can also lead to a situation that an argument is not evaluated at all under NO, whereas AO insists on evaluating it even if it turns out not being needed. As an example, take the following procedure that takes two arguments but returning only the first.</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">first</span> <span class="nv">x</span> <span class="nv">y</span><span class="p">)</span> <span class="nv">x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>If we apply that to 2 numeric expressions, say <code class="language-plaintext highlighter-rouge">42</code> and <code class="language-plaintext highlighter-rouge">(/ 10 0)</code>., then AO will crash with a division-by-zero error or numerical overflow, whereas NO gives back <code class="language-plaintext highlighter-rouge">42</code> without crashing as the crashing division is never evaluated.</p>
+
+<p>Of course, one could make the argument that <code class="language-plaintext highlighter-rouge">(/ 10 0)</code> is not a numerical expression, at least not a proper one, insofar that it does not evaluate to some value, it raises an error and potentially derails the overall evaluation. Actually, one can make the argument, that what happens when <code class="language-plaintext highlighter-rouge">(/ 10 0)</code>, namely raising an exception, is <strong>not a purely functional behavior</strong>, and the ``result’’, the exception, is not a value, but a <strong>side-effect</strong>. Taking that view would basically say that it’s not a good example for distinguishing AO vs NO in the substitution model and for purely functional programs.</p>
+
+<p>Fair enough, but next example is harder to argue away. Instead of raising an- error like division-by-zero, there are other programs that yield a value. That’s programs that <strong>do not terminate</strong>. The simplest one in Scheme is probably a procedure without parameters that simply calls itself:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">infiniteloop</span><span class="p">)</span>  <span class="p">(</span><span class="nf">infiniteloop</span><span class="p">))</span>
+  <span class="p">(</span><span class="nf">infiniteloop</span><span class="p">)</span>         <span class="c1">;; this never terminates</span>
+</code></pre></div></div>
+
+<p>It hard to argue that this should not be a purely functional program, it does not change any state with things like <code class="language-plaintext highlighter-rouge">set!</code>, it does not produces output like with <code class="language-plaintext highlighter-rouge">display</code>, it does not crash or raise an exception. It simply keeps on evaluating without ever producing a value. If we use the procedure <code class="language-plaintext highlighter-rouge">first</code> from above with the infinite-loop program as its second argument</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nf">first</span> <span class="mi">42</span>   <span class="p">(</span><span class="nf">infiniteloop</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>it will not terminate under AO, but produces <code class="language-plaintext highlighter-rouge">42</code> under NO. That’s clearly an example where AO vs NO makes a difference. In a way it’s just an extreme example for the observation that AO and NO can make a difference in the number of steps it takes to reach at a value. If we had an program that takes an enormous amount of steps to evaluate and used the same set-up, like</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="nf">first</span> <span class="mi">42</span>   <span class="nv">expr-that-takes-super-long-to-evaluate</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>then NO terminates very quick to produce 42, whereas AP takes super long before it procuces 42. In the infinite-loop example, that super-long just means ``foverver’’ or infinitely long.</p>]]></content><author><name></name></author><category term="functionalprogramming" /><category term="functional programming" /><category term="IN2040" /><category term="scheme" /><category term="lisp" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Y Y?</title><link href="/functionalprogramming/2022/10/13/ycombinator.html" rel="alternate" type="text/html" title="Y Y?" /><published>2022-10-13T00:00:00+02:00</published><updated>2022-10-10T00:00:00+02:00</updated><id>/functionalprogramming/2022/10/13/ycombinator</id><content type="html" xml:base="/functionalprogramming/2022/10/13/ycombinator.html"><![CDATA[<p>This is another post in connection with some slide showed in the lecture, which may have been a bit obscur. As with all these posts, the background information here is <strong>non-pensum</strong>.</p>
+
+<p>It’s triggered by some slide week 09 about```recursion with anonymous procedures’’. The slide showed a version of faculty programmed in a way unlike any we have seen before (and unlike any we will see afterwards). And in fact in a rather obscure way, for most. In fact, it’s programmed <strong>without recursion</strong>, in that there’s no procedure that calls itself. It only uses lambda-expressions, i.e., only <strong>anonymous</strong> functions are used, and since there’s no function with a name, there is no possibility that a procedure can call itself, at least not by its name.</p>
+
+<h1 id="recap-coding-faculty-using-only-anonymous-functions">Recap: Coding faculty using only anonymous functions</h1>
+
+<p>Let’s recap the presentation from the lecture a bit. It is a demonstration that one can program recursion using just anonymous functions. The starting point is the faculty procedure, programmed in the most straightforward recursive way.</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="nv">fac</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	  <span class="mi">1</span>
+	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>This is a recursive definition of <code class="language-plaintext highlighter-rouge">fac</code>. <code class="language-plaintext highlighter-rouge">fac</code> is bound to a lambda abstraction, and in the procedure body, <code class="language-plaintext highlighter-rouge">fac</code> is mentioned and called. Probably we got used to recursive definitions meanwhile that we don’t puzzle about that too much. Perhaps it’s worth to point out one crucial difference between <code class="language-plaintext highlighter-rouge">define</code> and <code class="language-plaintext highlighter-rouge">let</code>. It’s not possible to define <code class="language-plaintext highlighter-rouge">fac</code> using let as follows:</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span>
+    <span class="p">((</span><span class="nv">fac</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+	    <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="mi">1</span>
+		<span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>  <span class="c1">;; not the fac that is</span>
+                                         <span class="c1">;; being introduced via</span>
+                                         <span class="c1">;; let!</span>
+  <span class="nv">&lt;scope</span> <span class="nv">where</span> <span class="nv">fac</span> <span class="nv">is</span> <span class="nv">intended</span> <span class="nv">to</span> <span class="nv">be</span> <span class="nv">used&gt;</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Let</code> works similar as <code class="language-plaintext highlighter-rouge">define</code> (though it has an explicitly specified scope): it binds <code class="language-plaintext highlighter-rouge">fac</code> to this lambda-expression. However, this time it won’t work as intended, as <code class="language-plaintext highlighter-rouge">fac</code> is not yet defined. If you try that example yourself in some scheme interpreter, make sure that <code class="language-plaintext highlighter-rouge">fac</code> has not already been defined earlier, otherwise it will look as if it worked insofar the correct value comes out. But in that case, the <code class="language-plaintext highlighter-rouge">fac</code> introduced via <code class="language-plaintext highlighter-rouge">let</code> simply calls the previously defined <code class="language-plaintext highlighter-rouge">let</code>, it’s not a recursive definition.</p>
+
+<p>While we are at it: there exits a variant of <code class="language-plaintext highlighter-rouge">let</code> which would work, it’s called <code class="language-plaintext highlighter-rouge">letrec</code> and that would allow an intended recursive definition of <code class="language-plaintext highlighter-rouge">fac</code> (and in that respect works analogous to <code class="language-plaintext highlighter-rouge">define</code>).</p>
+
+<p>So far so good. Assume now we don’t want to use <code class="language-plaintext highlighter-rouge">define</code> to program faculty. Nor <code class="language-plaintext highlighter-rouge">letrec</code> obviously, nor <code class="language-plaintext highlighter-rouge">while</code> or other looping constructs that our favorite Scheme dialect may support (<code class="language-plaintext highlighter-rouge">while</code> is supported- Additionally one can program it easily oneself, but that’s not the topic now).</p>
+
+<p>Let’s look at the lambda abstraction in isolation, i.e., the above standard definition just without giving it a name with <code class="language-plaintext highlighter-rouge">define</code>.</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+   <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+       <span class="mi">1</span>
+       <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>Now, we don’t define anything, and the interpreter would anyway probably complain or warn us that <code class="language-plaintext highlighter-rouge">fac</code> is undefined (assuming we have not defined it earlier of course). But it’s just a warning, the base case would work. In other words: doing <code class="language-plaintext highlighter-rouge">((lambda (n) (if (= n 1) 1 (* n (fac (- n 1))))) 1)</code> gives back the faculty of 1. Of course applying it to any other larger than 1 crashes the application, as it tries to call <code class="language-plaintext highlighter-rouge">fac</code>, which is undefined, as we assume.</p>
+
+<p>Of course we would not expect the previous code to do something meaningful, what we need to do in the non-base case is <strong>to call the procedure itself</strong>, which is the lambda-expression itself, not the non-existing function with the tempting name <code class="language-plaintext highlighter-rouge">fac</code>. But the lambda expression has no name, it’s anonymous and we disallowed ourselves to to give it a name with <code class="language-plaintext highlighter-rouge">define</code> or <code class="language-plaintext highlighter-rouge">letrec</code> to call it in the lambda expression.</p>
+
+<p>Now, with <code class="language-plaintext highlighter-rouge">define</code> and <code class="language-plaintext highlighter-rouge">letrec</code> off-limits (and <code class="language-plaintext highlighter-rouge">let</code> useless for our purpose), there is still a mechanism we can use to give a name to a procedure, that’s <strong>lambda</strong>. So let’s try to enclose the above (useless) lambda abstraction with another <code class="language-plaintext highlighter-rouge">lambda</code> and hand over the function. It looks like that:</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="p">)</span>
+   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>Does that help? Not really. Sure, the call to <code class="language-plaintext highlighter-rouge">fac</code> in the body is now defined, as the variable is bound be the outer <code class="language-plaintext highlighter-rouge">lambda</code>. So what we have achieved is that we have a function that takes a function as argument and then a number, then makes case distinction, in the (intended) base case, it gives <code class="language-plaintext highlighter-rouge">1!</code> which is <code class="language-plaintext highlighter-rouge">1</code>. In the (intended) recursion case it does a calculation as expected for faculty and uses the argument function <code class="language-plaintext highlighter-rouge">fac</code> on the decreased numerical input, and assuming it’s not yet defined, it will raise an error.</p>
+
+<p>But just because we named the formal parameter <code class="language-plaintext highlighter-rouge">fac</code> does not make it into the faculty function. We still have not achieved a situation where the abstraction <strong>calls or repeats itself</strong> and thereby turns itself to the faculty function. In particular</p>
+
+<blockquote>
+  <p><strong><code class="language-plaintext highlighter-rouge">fac</code> is an argument to the anonymous function, it’s not the anonymous function itself!</strong></p>
+</blockquote>
+
+<p>Assume for the moment, we somehow could arrange, that the anonymous function is indeed passed as argument as into its own formal parameter <code class="language-plaintext highlighter-rouge">fac</code>. Actually, we will soon arrange just that, and it’s actually not hard.</p>
+
+<p>But assuming that we somehow can pass the previously defined <strong>abstraction as argument to itself</strong>, there’s another problem. Under said assumption, the above code makes no sense, it has a ``type error’’. Of course, Scheme has no static type system, so there’s no type checker around that alerts us to the fact that the code would have a serious defect, one has to wait until one runs it to see the (run-time) type error.</p>
+
+<p>What’s the defect, then? The anonymous function is a higher-order function that takes a function as argument and afterwards can be applied to a number: there a lambda-abstraction with <code class="language-plaintext highlighter-rouge">fac</code> as formal parameter followed by another abstraction with <code class="language-plaintext highlighter-rouge">n</code> as parameter. However, the function call on <code class="language-plaintext highlighter-rouge">fac</code> in the body of the abstraction takes just a number as argument, here <code class="language-plaintext highlighter-rouge">(- n 1)</code>.</p>
+
+<p>That’s a mismatch. But one that is easy to repair, Since we assume that <code class="language-plaintext highlighter-rouge">fac</code> is actually the lambda abstraction, we simply call it properly. It expects a function first and then a number so we don’t call it in the body as <code class="language-plaintext highlighter-rouge">(fac (- n 1))</code>, but call it the way the anonymous function requires it, namely first with a functional argument, namely <code class="language-plaintext highlighter-rouge">fac</code> itself. With that, the previous abstraction is massaged into the following</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="p">)</span>
+	    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+	      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+		  <span class="mi">1</span>
+		  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span>
+		     <span class="p">((</span><span class="nv">fac</span> <span class="nv">fac</span><span class="p">)</span>       <span class="c1">;; &lt;-</span>
+		      <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span><span class="err">))</span>  <span class="c1">;; </span>
+</code></pre></div></div>
+
+<p>To avoid misunderstanding, the previous version did not have a type error, it would have a type error under the assumption that we somehow would be able somehow pass itself as argument into <code class="language-plaintext highlighter-rouge">fac</code>. In itself, there’s nothing wrong with the function type-wise.</p>
+
+<p>But we have not achieved that trick yet, how to pass the abstraction into the formal parameter. Actually, it’s fairly simple.</p>
+
+<p>Note that we are disallowed ourselves to use <code class="language-plaintext highlighter-rouge">define</code> or <code class="language-plaintext highlighter-rouge">letrec</code>, but giving names to functions is still fine. So if we give the code from above a name, then we can use that name to call it <strong>and</strong> at the same time pass it as argument to itself! Let’s ``de-anonymize’’ the higher-order function and give it a name, here <code class="language-plaintext highlighter-rouge">proc</code>:</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">proc</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="o">'</span><span class="p">)</span>
+	       <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+		 <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+		     <span class="mi">1</span>
+		     <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nv">fac</span><span class="o">'</span> <span class="nv">fac</span><span class="o">'</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))))</span>
+  <span class="p">(</span><span class="nv">proc</span> <span class="nv">proc</span><span class="p">))</span>    <span class="c1">;; self application of proc =</span>
+                  <span class="c1">;; self-application of the</span>
+                  <span class="c1">;; (previously) anonymous function</span>
+</code></pre></div></div>
+
+<p>Note that also the formal parameter has been renamed from <code class="language-plaintext highlighter-rouge">fac</code> to <code class="language-plaintext highlighter-rouge">fac'</code>. Not a big deal, actually, <code class="language-plaintext highlighter-rouge">fac</code> would also work, but maybe that’s misleading. The function intended to be passed for that functional formal parameter is the abstraction (in the meantime called <code class="language-plaintext highlighter-rouge">proc</code>), and that’s <strong>not</strong> the faculty function (though of course closely related).</p>
+
+<p>Basically we are done. If one still likes to have the faculty function under its usual name, that’s now child’s play. Let’s use <code class="language-plaintext highlighter-rouge">define</code> to associate the above construction with that name, and then we check if everything worked out fine. Note that there is no recursive use of <code class="language-plaintext highlighter-rouge">fac</code>, so we might also have used <code class="language-plaintext highlighter-rouge">let</code> instead of <code class="language-plaintext highlighter-rouge">define</code>.</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="nv">fac</span>         <span class="c1">;; just give the whole thing the conventional name</span>
+    <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nv">proc</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span><span class="o">'</span><span class="p">)</span>
+		   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+		     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+			 <span class="mi">1</span>
+			 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nv">fac</span><span class="o">'</span> <span class="nv">fac</span><span class="o">'</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))))</span>
+      <span class="p">(</span><span class="nv">proc</span> <span class="nv">proc</span><span class="p">)))</span>
+<span class="p">(</span><span class="nv">fac</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1">; -&gt; 24</span>
+</code></pre></div></div>
+
+<h1 id="to-be-continued">To be continued</h1>
+
+<p>This was reconstruction or analysis of some perhaps puzzling piece of code shown in the lecture, a slightly convoluted way to code one particular recusive function, the good old faculty. That can be generalized and leads to something called <strong>Y-combinator</strong>. As soon as time allows, I might describe the larger context of such combinators, ultimately a fixpoint construction</p>
+
+<p>For the nitpicking mind: of course: + etc are named procedures.</p>
+
+<p>Exercise 4.21.</p>
+
+<p>combinator</p>
+
+<p>fixpoint combinator fixpoint</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+   <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	  <span class="mi">1</span>
+	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+    <span class="nv">n</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h1 id="why-is-it-called-paradocial-operator">Why is it called paradocial operator</h1>
+
+<h1 id="how-to-define-fac-with-y">How to define fac with Y.</h1>
+
+<p>Let’s take the faculty as example. Of course it’s not like Y fac, it’s <code class="language-plaintext highlighter-rouge">Y f = fac</code>. One question is, what is <code class="language-plaintext highlighter-rouge">f</code> and another one is if the situation corresponds to the one shown in the lecture, or is it a different FP combinator implicitly used</p>
+
+<p>First, there are two exquivalent formulations of Y</p>
+
+<p>(nat -&gt; nat) -&gt; nat -&gt; nat</p>
+
+<h1 id="wikipedia-fixed-point-combinators-in-lambda-calculus">Wikipedia Fixed-point combinators in lambda calculus</h1>
+
+<p>In the lecture, of course it’s not the y combinator, but an illustration, Perhaps it’s the illustation what happens when to apply Y to faculty.</p>
+
+<h2 id="the-y-combinator-discovered-by-haskell-b-curry-is-defined-as">The Y combinator, discovered by Haskell B. Curry, is defined as</h2>
+
+<p>Y = λ f . ( λ x . f ( x x ) ) ( λ x . f ( x x ) ) . {\displaystyle Y=λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x))\ .} {\displaystyle Y=λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x))\ .}</p>
+
+<p>Beta reduction of this gives: Y g {\displaystyle Y\ g} Y\ g = ( λ f . ( λ x . f ( x x ) ) ( λ x . f ( x x ) ) ) g {\displaystyle =(λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x)))\ g} =(λ f.(λ x.f\ (x\ x))\ (λ x.f\ (x\ x)))\ g (by definition of Y) = ( λ x . g ( x x ) ) ( λ x . g ( x x ) ) {\displaystyle =(λ x.g\ (x\ x))\ (λ x.g\ (x\ x))} =(λ x.g\ (x\ x))\ (λ x.g\ (x\ x)) (by β-reduction of λf: applied Y to g) = g ( ( λ x . g ( x x ) ) ( λ x . g ( x x ) ) ) {\displaystyle =g\ ((λ x.g\ (x\ x))\ (λ x.g\ (x\ x)))} {\displaystyle =g\ ((λ x.g\ (x\ x))\ (λ x.g\ (x\ x)))} (by β-reduction of λx: applied left function to right function) = g ( Y g ) {\displaystyle =g\ (Y\ g)} =g\ (Y\ g) (by second equality)</p>
+
+<p>Repeatedly applying this equality gives:</p>
+
+<p>Y g = g ( Y g ) = g ( g ( Y g ) ) = g ( … g ( Y g ) … ) {\displaystyle Y\ g=g\ (Y\ g)=g\ (g\ (Y\ g))=g\ (\ldots g\ (Y\ g)\ldots )} {\displaystyle Y\ g=g\ (Y\ g)=g\ (g\ (Y\ g))=g\ (\ldots g\ (Y\ g)\ldots )}</p>
+
+<p>(The equality above should be thought of as a sequence of multi-step β-reductions from left to right. The lambda term g ( Y g ) {\displaystyle g\ (Y\ g)} {\displaystyle g\ (Y\ g)} may not, in general, β-reduce to the term Y g {\displaystyle Y\ g} Y\ g. One can interpret the equality signs as β-equivalences instead of multi-step β-reductions to allow for going in both directions.)</p>
+
+<h4 id="equivalent-definition-of-a-fixed-point-combinator">Equivalent definition of a fixed-point combinator</h4>
+
+<p>This fixed-point combinator may be defined as y, as in</p>
+
+<p>x = f x ∧ y f = x {\displaystyle x=f\ x∧ y\ f=x} {\displaystyle x=f\ x∧ y\ f=x}</p>
+
+<p>An expression for y may be derived using rules from the definition of a let expression. Firstly, using the rule</p>
+
+<p>( ∃ x E ∧ F ) ⟺ let ⁡ x : E in ⁡ F {\displaystyle (∃ xE∧ F)\iff \operatorname {let} x:E\operatorname {in} F} {\displaystyle (∃ xE∧ F)\iff \operatorname {let} x:E\operatorname {in} F}</p>
+
+<p>gives</p>
+
+<p>let ⁡ x = f x in ⁡ y f = x . {\displaystyle \operatorname {let} x=f\ x\operatorname {in} y\ f=x\ .} {\displaystyle \operatorname {let} x=f\ x\operatorname {in} y\ f=x\ .}</p>
+
+<p>Also, using</p>
+
+<p>x ∉ FV ⁡ ( E ) ∧ x ∈ FV ⁡ ( F ) → let ⁡ x : G in ⁡ E F = E ( let ⁡ x : G in ⁡ F ) {\displaystyle x¬ ∈ \operatorname {FV} (E)∧ x∈ \operatorname {FV} (F)→ \operatorname {let} x:G\operatorname {in} E\ F=E\ (\operatorname {let} x:G\operatorname {in} F)} {\displaystyle x¬ ∈ \operatorname {FV} (E)∧ x∈ \operatorname {FV} (F)→ \operatorname {let} x:G\operatorname {in} E\ F=E\ (\operatorname {let} x:G\operatorname {in} F)}</p>
+
+<p>gives</p>
+
+<p>y f = let ⁡ x = f x in ⁡ x . {\displaystyle y\ f=\operatorname {let} x=f\ x\operatorname {in} x\ .} {\displaystyle y\ f=\operatorname {let} x=f\ x\operatorname {in} x\ .}</p>
+
+<p>And then using the eta reduction rule,</p>
+
+<p>f x = y ⟺ f = λ x . y , {\displaystyle f\ x=y\iff f=λ x.y\ ,} {\displaystyle f\ x=y\iff f=λ x.y\ ,}</p>
+
+<p>gives</p>
+
+<p>y = λ f . let ⁡ x = f x in ⁡ x . {\displaystyle y=λ f.\operatorname {let} x=f\ x\operatorname {in} x\ .} {\displaystyle y=λ f.\operatorname {let} x=f\ x\operatorname {in} x\ .}</p>
+
+<h3 id="fact">Fact</h3>
+
+<p>This is also from Wikipedia.</p>
+
+<p>We</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> F f n  = (if (= n 1) 1 (* n (f (- n 1))))
+</code></pre></div></div>
+
+<p>The following is a wish. We want to have some constuction or operator F (or is it Y in the end). Anyway, we want to find two things, <code class="language-plaintext highlighter-rouge">F</code> and <code class="language-plaintext highlighter-rouge">f</code> so that when one applies one to the other. Not very convincing</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> (F f)   def= (lambda (n) (if (= n 1) 1 (* n (f (- n 1)))))
+</code></pre></div></div>
+
+<p>The right hand side is not the faculty. It’s still kind of recursive. And F is not explained (maybe it’s <code class="language-plaintext highlighter-rouge">fix</code> on the next display? No, there is <code class="language-plaintext highlighter-rouge">fix</code> and <code class="language-plaintext highlighter-rouge">F</code></p>
+
+<p>This gives Y F n as</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> fix F n = F (fix F) n = (if (= n 1) 1 (* n (f (- n 1))))
+</code></pre></div></div>
+
+<p>what’s F in the end</p>
+
+<p>fix F n = F ( fix F ) n = ( IsZero ⁡ n ) 1 ( multiply ⁡ n ( ( fix F ) ( pred ⁡ n ) ) ) . {\displaystyle {\begin{aligned}{\textsf {fix}}\ F\ n&amp;=F\ ({\textsf {fix}}\ F)\ n\\&amp;=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (({\textsf {fix}}\ F)\ (\operatorname {pred} \ n)))\ .\end{aligned}}} {\displaystyle {\begin{aligned}{\textsf {fix}}\ F\ n&amp;=F\ ({\textsf {fix}}\ F)\ n\\&amp;=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (({\textsf {fix}}\ F)\ (\operatorname {pred} \ n)))\ .\end{aligned}}}</p>
+
+<p>Setting fix F = fact {\displaystyle {\textsf {fix}}\ F=\operatorname {fact} } {\displaystyle {\textsf {fix}}\ F=\operatorname {fact} } gives</p>
+
+<p>fact ⁡ n = ( IsZero ⁡ n ) 1 ( multiply ⁡ n ( fact ⁡ ( pred ⁡ n ) ) ) . {\displaystyle \operatorname {fact} \ n=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (\operatorname {fact} \ (\operatorname {pred} \ n)))\ .} {\displaystyle \operatorname {fact} \ n=(\operatorname {IsZero} \ n)\ 1\ (\operatorname {multiply} \ n\ (\operatorname {fact} \ (\operatorname {pred} \ n)))\ .}</p>
+
+<p>This definition puts F in the role of the body of a loop to be iterated, and is equivalent to the mathematical definition of factorial:</p>
+
+<h3 id="one-more-time-with-pa">One more time with PA</h3>
+
+<p>We don’t know yet that it’s an FPO, so it’s not a good explanation. But anyway.</p>
+
+<p>The following is recursive</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  fac =def (lambda (n) (if ((? n 0) 1 (* n (fac (- n 1)))))
+</code></pre></div></div>
+
+<p>The following is the same one, just ``expanded’’</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  fac =def (lambda (f) (lambda (n) (if ((= n 0) 1 (* n (f (- n 1)))))) fac
+</code></pre></div></div>
+
+<p>Now that’s a <strong>fixpoint</strong> equation (but of course not official Scheme code, mentioning <code class="language-plaintext highlighter-rouge">=def). A fixpoint of some function ~f</code> is a value, for which <code class="language-plaintext highlighter-rouge">f(a) = a</code>, and the above equation stipulates that <code class="language-plaintext highlighter-rouge">fac</code> is a fixpoint of the procedure, which we could give a name, say <code class="language-plaintext highlighter-rouge">F</code></p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="nv">F</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span>
+	    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+	      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+		  <span class="mi">1</span>
+		  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>That is legal Scheme code (except that it’s considered bad style to use capital letters…). <code class="language-plaintext highlighter-rouge">F</code> is a higher-order function in that it takes a functional argument.</p>
+
+<p>As said, when applying <code class="language-plaintext highlighter-rouge">F</code> to the faculty procedure, the result is the faculty procedure itself, i.e., <code class="language-plaintext highlighter-rouge">fac</code> is a fixpoijt of <code class="language-plaintext highlighter-rouge">F</code>. We can check that, by applying <code class="language-plaintext highlighter-rouge">F</code> to fac, and using the <strong>substitution model</strong> to check what happens. So let’s do <code class="language-plaintext highlighter-rouge">(F fac)</code>. Substituting <code class="language-plaintext highlighter-rouge">f</code> by <code class="language-plaintext highlighter-rouge">fac</code> in the body of <code class="language-plaintext highlighter-rouge">F</code> we obtain</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+      <span class="mi">1</span>
+      <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nv">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span><span class="err">))</span>
+</code></pre></div></div>
+
+<p>That’s an anonymous function, a lambda-expression, but it definitely implements faculty; The result for the base case is returned directly, in the non-base case, the calculation is done by <code class="language-plaintext highlighter-rouge">fac</code>. This confirms that <code class="language-plaintext highlighter-rouge">fac</code> is indeed a fixpoint of <code class="language-plaintext highlighter-rouge">F</code> but it’s not a definition of <code class="language-plaintext highlighter-rouge">fac</code>. It assumes it previously defined, typically by a recursive definition, calling itself.</p>
+
+<p>But how can we define <code class="language-plaintext highlighter-rouge">fac</code> without calling it recursively using define (or <code class="language-plaintext highlighter-rouge">letrec</code>)?</p>
+
+<p>What’s needed is a procedure that takes (in this example) the higher-order function <code class="language-plaintext highlighter-rouge">F</code> as argument and returns <code class="language-plaintext highlighter-rouge">fac</code> as <code class="language-plaintext highlighter-rouge">F</code>’s fixpoint as result. As procedure that can do that is called consequently a <strong>fixpoint operator</strong> or <strong>fixpoint combinator</strong>.</p>
+
+<p>The explanation just given contains a slight sloppyness. We know that the given <code class="language-plaintext highlighter-rouge">F</code> has a fix-point, we checked that, and it’s the faculty function. But who said that it has not more than one fix-point, and if so, which one do we want? Let’s not concern us too deeply with that, we simply want to code an operator, that, when applied to <code class="language-plaintext highlighter-rouge">F</code> constructs the recursive function <code class="language-plaintext highlighter-rouge">fac</code> for us, and we don’t loose sleep over the fact that there may be other fixpoints of <code class="language-plaintext highlighter-rouge">F</code>. Indeed, fixpoints are typically not unique, but a proper answer which fixpoint we want requires more theory than we would like to invest in here. But with an approriate amount of theoretical overhead one would see that fixpoint we construct would be the smallest fixpoint.</p>
+
+<p>But then, how? How to find an operator that takes <code class="language-plaintext highlighter-rouge">F</code> ans input and returns</p>
+
+<h3 id="whats-the-connection-of-f-with-the-formulation-in-the-lecture">What’s the connection of <code class="language-plaintext highlighter-rouge">F</code> with the formulation in the lecture?</h3>
+
+<p>Let’s ignore the partial application stuff. What we call <code class="language-plaintext highlighter-rouge">F</code> here is <strong>not</strong> the argument on which the first one is applied.</p>
+
+<p><a href="file:///home/msteffen/cor/teaching/2040/lecturerepository/src/notes/lectures/code/09/facwithoutrec.scm">fac without rec</a>. That also means, the first part (here pa)</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">proc</span><span class="p">)</span>
+  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+    <span class="nv">proc</span> <span class="nv">proc</span> <span class="nv">n</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>is not the Y combinator. There is the possiblity that the code is the result of the Y operator applied to <code class="language-plaintext highlighter-rouge">F</code>. Below, we have two versions, one the symmetric beta-reduced one. However, we should keep in mind that in the lecture there is no pa, and the argument <code class="language-plaintext highlighter-rouge">n</code> is given</p>
+
+<h3 id="whats-the-connection-of-the-formulation-of-the-lecture-with-here">What’s the connection of the formulation of the lecture with here?</h3>
+
+<h3 id="rest-of-argument-scracht">Rest of argument scracht</h3>
+
+<p>λ f . ( λ y . y y ) ( λ z . f ( z z ) )</p>
+
+<p>Apply <code class="language-plaintext highlighter-rouge">Y</code> to <code class="language-plaintext highlighter-rouge">F</code></p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">Y</span> <span class="nv">F</span> <span class="c1">;; -&gt;</span>
+<span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">y</span><span class="p">)</span>  <span class="nv">y</span> <span class="nv">y</span><span class="p">)</span>  <span class="c1">;;      λ f . ( λ y . y   y )   ( λ z . f   ( z   z ) )</span>
+	      <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">))))))</span>
+ <span class="nv">F</span><span class="err">)</span>
+<span class="c1">;; &lt;-&gt;</span>
+<span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))))</span>  <span class="c1">;;   λ f . ( λ z . f   ( z   z ) )   ( λ z . f   ( z   z ) ) 	</span>
+<span class="c1">;; &lt;-&gt;</span>
+<span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">))))))</span>
+
+<span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">f</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nv">z</span><span class="p">)</span> <span class="p">(</span><span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))</span> <span class="nv">f</span> <span class="p">(</span><span class="nv">z</span> <span class="nv">z</span><span class="p">)))))</span>
+<span class="c1">;; &lt;-&gt;</span>
+
+  
+</code></pre></div></div>
+
+<p>What is currentl</p>
+
+<h3 id="derivation-of-the-y-combinator">Derivation of the Y combinator</h3>
+
+<p>Starting with,</p>
+
+<p>λ f . let ⁡ x = f x in ⁡ x , {\displaystyle λ f.\operatorname {let} x=f\ x\operatorname {in} x\ ,} {\displaystyle λ f.\operatorname {let} x=f\ x\operatorname {in} x\ ,}</p>
+
+<p>A lambda abstraction does not support reference to the variable name, in the applied expression, so x must be passed in as a parameter to x. We can think of this as replacing x by x x, but formally this is not correct. Instead defining y by ∀ z , y z = x {\displaystyle ∀ z,y\ z=x} ∀ z,y\ z=x gives</p>
+
+<p>λ f . let ⁡ y z = f ( y z ) in ⁡ y z . {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ z\ .} {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ z\ .}</p>
+
+<p>The let expression may be regarded as the definition of the function y, where z is the parameter. Instantiation z as y in the call gives</p>
+
+<p>λ f . let ⁡ y z = f ( y z ) in ⁡ y y . {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ y\ .} {\displaystyle λ f.\operatorname {let} y\ z=f\ (y\ z)\operatorname {in} y\ y\ .}</p>
+
+<p>And, because the parameter z always passes the function y,</p>
+
+<p>λ f . let ⁡ y z = f ( z z ) in ⁡ y y . {\displaystyle λ f.\operatorname {let} y\ z=f\ (z\ z)\operatorname {in} y\ y\ .} {\displaystyle λ f.\operatorname {let} y\ z=f\ (z\ z)\operatorname {in} y\ y\ .}</p>
+
+<p>Using the eta reduction rule,</p>
+
+<p>f x = y ≡ f = λ x . y , {\displaystyle f\ x=y≡ f=λ x.y\ ,} {\displaystyle f\ x=y≡ f=λ x.y\ ,}</p>
+
+<p>gives</p>
+
+<p>λ f . let ⁡ y = λ z . f ( z z ) in ⁡ y y . {\displaystyle λ f.\operatorname {let} y=λ z.f\ (z\ z)\operatorname {in} y\ y\ .} {\displaystyle λ f.\operatorname {let} y=λ z.f\ (z\ z)\operatorname {in} y\ y\ .}</p>
+
+<p>A let expression may be expressed as a lambda abstraction; using</p>
+
+<p>n ∉ F V ( E ) → ( let ⁡ n = E in ⁡ L ≡ ( λ n . L ) E ) {\displaystyle n¬ ∈ FV(E)→ (\operatorname {let} n=E\operatorname {in} L≡ (λ n.L)\ E)} {\displaystyle n¬ ∈ FV(E)→ (\operatorname {let} n=E\operatorname {in} L≡ (λ n.L)\ E)}</p>
+
+<p>gives</p>
+
+<p>λ f . ( λ y . y y ) ( λ z . f ( z z ) ) . {\displaystyle λ f.(λ y.y\ y)\ (λ z.f\ (z\ z))\ .} {\displaystyle λ f.(λ y.y\ y)\ (λ z.f\ (z\ z))\ .}</p>
+
+<p>This is possibly the simplest implementation of a fixed-point combinator in lambda calculus. However, one beta reduction gives the more symmetrical form of Curry’s Y combinator:</p>
+
+<p>λ f . ( λ z . f ( z z ) ) ( λ z . f ( z z ) ) . {\displaystyle λ f.(λ z.f\ (z\ z))\ (λ z.f\ (z\ z))\ .} {\displaystyle λ f.(λ z.f\ (z\ z))\ (λ z.f\ (z\ z))\ .}</p>
+
+<p>See also Translating between let and lambda expressions.</p>
+
+<h1 id="text">Text</h1>
+
+<p>Of course, also in the example, the second function being used, also in the fac example, is not <code class="language-plaintext highlighter-rouge">fac</code>. That cannot be, of course.</p>
+
+<p>The type is <code class="language-plaintext highlighter-rouge">(Nat -&gt; Nat) -&gt; Nat -&gt; Nat</code></p>
+
+<h1 id="the-fac-with-the-y-combinator">The fac with the Y combinator</h1>
+
+<p>We should also do that</p>
+
+<h2 id="would-it-be-the-same-same-function-to-the-y">Would it be the same same function to the Y?</h2>
+
+<h2 id="question-is-there-a-connection-to-recursion-through-the-heap">QUESTION is there a connection to recursion through the heap?</h2>
+
+<p>Is it worth exploring it?</p>]]></content><author><name></name></author><category term="functionalprogramming" /><category term="Y combinator" /><category term="IN2040" /><category term="lambda calculus" /><category term="recursion" /><category term="Turing complete" /><category term="computable functions" /><category term="foundations" /><category term="Church numerals" /><summary type="html"><![CDATA[or why Y?]]></summary></entry><entry><title type="html">Recursion, primitive or otherwise</title><link href="/functionalprogramming/2022/07/07/ackermann.html" rel="alternate" type="text/html" title="Recursion, primitive or otherwise" /><published>2022-07-07T00:00:00+02:00</published><updated>2022-07-12T00:00:00+02:00</updated><id>/functionalprogramming/2022/07/07/ackermann</id><content type="html" xml:base="/functionalprogramming/2022/07/07/ackermann.html"><![CDATA[<p>The SICP textbook shows in <strong>Exercise 1.10</strong> a famous function known as <strong>Ackermann’s function</strong>. Actually the code there shows one version of that function; there are minor variations of it, all doing basically the same, and all known as Ackermann function. The exercise is not on the list of exercises officially discussed in the group sessions, but perhaps you have stumbled upon it or the group teacher discusses it.</p>
+
+<p>As said, the function is very well known, and it’s always discussed in connection with a concept called primitive recursion (and also that is not on the pensum of the lecture). So if one reads about primitive recursion, invariably the Ackermann function is mentioned and if the Ackermann function is discussed, then it’s discussed in connection with primitive recursion, namely pointing out that Ackermann’s function is not primitive recursive. Actually, Exercise 1.10 in SICP is an exception to that rule, it gives the definition of the function and asks to observe how it behaves but does not mention primitive recursion.</p>
+
+<h1 id="primitive-recursion">Primitive recursion</h1>
+
+<p>Ackermann’s function is the first and most prominent example of a terminating function which is not-primitive recursive. That is largely the reason why it is famous. It’s also known as example for a function that grows extremely fast (that can be observed by playing around with it in Exercise 1.10). Both facts hang together; abstractly speaking, it grows too fast for any possible primitive-recursive function, while still terminating. The function is not famous for being practically useful. Also for that it grows too fast.</p>
+
+<p>So if one has ever heard of the Ackermann function at all, it’s probably exactly for that: it’s <strong>``the’‘</strong> example of a function that is not primitive recursive. Also googling around in the internet, starting maybe at Wikipedia and at various different other pages that offer wisdom and answers on various questions, will confirm that. You can look for questions like ``What is an example of a total function that is not primitive recursive?’’ (answer ``Ackermann’’) or ``what’s the Ackermann function’’ (answer: an example for a non-primitive-recursive function), and on and on.</p>
+
+<p>Alright, got it, Ackermann is not primitive recursive.</p>
+
+<div class="org-center">
+<p>
+<b>But that's actually not true!</b>
+</p>
+</div>
+
+<p>Or maybe I should be more modest. It’s true under only under assumptions taken for granted and left often unmentioned. It’s an assumption that maybe never even crosses the mind of people who just ``know’’ that Ackermann is not primitive-recursive and people who write web-pages explaining Ackermann, that in fact there <strong>is</strong> a restriction.</p>
+
+<p>Participants of a course on functional programming, however, may not suffer from or at least should not suffer from that blind spot. What unspoken restriction are we talking about? I come to that in a moment, but before that, we need at least sketch what is actually meant by primitive recursion.</p>
+
+<h3 id="primitive-recursive-functions">Primitive recursive functions</h3>
+
+<p>General <strong>recursion</strong> is ubiquitous in the lecture, most functions half-way interesting use recursion. Primitive recursive functions are a restricted class of recursive functions. We don’t bother to give a precise definition of the concept; it’s easy to find it explained on the internet.</p>
+
+<p>You will remember that SICP distinguishes between recursive procedures and recursive (resp. iterative) <em>processes</em>, where processes refers to what happens at run-time. Let’s focus on what the book calls ``procedures’’, the code representation, not the processes.</p>
+
+<p>A recursive procedure is one that calls itself in its body. There is also indirect or mutual recursion, which is a situation where two or more procedures call each other; in software-engineering circles that’s also sometimes called a ``call-back’’ situation. Nevermind. There are no restrictions on how procedures can recursively call themselves (or each other). In other words, Scheme and Lisp (and most other modern languages) support recursion in its general form, unrestricted.</p>
+
+<p>One can use recursion to easily come up with functions that don’t terminate. The simplest example is the one from <strong>Exercise 1.5</strong>, which does in fact nothing else than recursively calling itself (and thus will never terminate):</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="p">(</span><span class="nv">p</span><span class="p">)</span> <span class="p">(</span><span class="nv">p</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>One can then study restrictions on the use of recursion. One example is known as <strong>tail recursion</strong>. The book and the lecture uses that term in connection with the interpreter, stating that the scheme interpreter is an example of a <strong>tail recursive interpreter</strong>. More conventionally, one calls functions or procedures <strong>tail recursive</strong> and that characterizes functions, procedures, methods etc. which call themselves only ```at the end’’ of their body. In the terminology of SICP, that leads to an <em>iterative process</em>, not a <em>recursive process</em> (at least in an interpreter that knows how to deal with it adequately and efficiently).</p>
+
+<p>So, a tail-recursive procedure is a restricted form of a recursive procedure.</p>
+
+<p>But now to the restriction on recursion called <strong>primitive</strong>. The exact definition of primitive recursive functions involves fixing allowed elementary constructs, and projections and other details. The core of the concept, however, is the way recursion itself is allowed. It can be roughly stated as</p>
+
+<blockquote>
+  <p>A function can call itself recursively, but only on smaller arguments.</p>
+</blockquote>
+
+<p>Instead of giving the formal definition of the primitive recursion operator, we give a feeling what’s allowed and what’s not allowed by small examples. Primitive recursive functions are classically defined as functions on <strong>natural numbers</strong> as arguments and as return value. For that, being smaller is pretty obvious. Let’s look at the following function <code class="language-plaintext highlighter-rouge">f</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(define (f x y)
+  (if (= x y) y
+      (+ (f (+ x 1) y) 1)))
+
+</code></pre></div></div>
+
+<p>The function is supposed to take 2 natural numbers as argument. Additionally, let’s assume the argument for <code class="language-plaintext highlighter-rouge">x</code> is smaller or equal than <code class="language-plaintext highlighter-rouge">y</code>. Otherwise the corresponding process would not terminate. That’s a minor point, we can of course easily add a couple of lines, checking first whether the assumption is true, and if not, doing analogous calculation to cover also that situation, making it terminating for arbitrary natural numbers. But that’s not central to the discussion here.</p>
+
+<p>Now, <code class="language-plaintext highlighter-rouge">f</code> is recursive, calling itself (and it’s not tail-recursive). Now, is the function primitive-recursive? The definition of <code class="language-plaintext highlighter-rouge">(f x y)</code> calls itself with <code class="language-plaintext highlighter-rouge">(f (+ x 1) y)</code> and that is <strong>forbidden</strong> in primitive recursive schemas. So does that mean the function is not primitive recursive?</p>
+
+<p>Not so fast. The way it’s defined is certainly not the primitive-recursive way But in the same way, that one may transform non-tail-recursive procedure definitions into tail-recursive ones (the lecture had examples for that), one may reformulate sometimes non-primitive-recursive definitions so that they fit the schema. What function is it anyway, given above? It’s easy enough, it calculates <code class="language-plaintext highlighter-rouge">2y - x</code> (for <code class="language-plaintext highlighter-rouge">x &lt;= y</code>).</p>
+
+<p>It turns out that this function indeed is primitive-recursive, in that one can easily define it using primitive recursion schemas. Indeed, it’s straightforward since one can define multiplication and addition and minus easily via primitive recursion. Defining the calculation <code class="language-plaintext highlighter-rouge">2y-x</code> this way seems more natural than the slightly weird recursive definition where <code class="language-plaintext highlighter-rouge">f</code> calls itself on <code class="language-plaintext highlighter-rouge">(+ n 1)</code>, but the definition was given to illustrate what is <em>not</em> allowed.</p>
+
+<p>To illustrate what <em>is</em> allowed, let’s sketch how addition of two natural numbers can be defined with primitive recursion. Actually, it corresponds to the most straightforward definition of addition (assuming that the successor function is given as a more basic operation, here written as <code class="language-plaintext highlighter-rouge">+1</code>. So <code class="language-plaintext highlighter-rouge">x +1</code> is not meant as using binary addition on <code class="language-plaintext highlighter-rouge">x</code> and 1 as arguments, but calculating the successor of <code class="language-plaintext highlighter-rouge">x</code>. We also use infix notation and equations, not Lisp-like prefix and code, though one easily could).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   0   + y = 0
+(x +1) + y = (x + y) +1
+</code></pre></div></div>
+
+<p>The primitive recursion schema generally specifies a <em>base case</em> (the first line in the above example) and an <em>induction</em> case (the second line). In the case of addition, to define <code class="language-plaintext highlighter-rouge">(x +1) + y</code>, the recursion scheme can use on the right-hand side of the equation a function <code class="language-plaintext highlighter-rouge">h</code> that takes three arguments, and allowed as arguments are <code class="language-plaintext highlighter-rouge">x</code> <code class="language-plaintext highlighter-rouge">y</code>, and <code class="language-plaintext highlighter-rouge">(x + y)</code>. Besides it could rely on earlier defined functions and some primitive operations. In our very simple example, the <code class="language-plaintext highlighter-rouge">x</code> and <code class="language-plaintext highlighter-rouge">y</code> are not needed in the construction, <code class="language-plaintext highlighter-rouge">x + y</code> is the only relevant part and the successor function <code class="language-plaintext highlighter-rouge">+1</code> is built-in. (NB: to avoid confusion: the values of <code class="language-plaintext highlighter-rouge">x</code> and <code class="language-plaintext highlighter-rouge">y</code> are not needed individually and directly as argument to the function <code class="language-plaintext highlighter-rouge">h</code>, but of course they are needed indirectly in that their sum <code class="language-plaintext highlighter-rouge">x + y</code> is used).</p>
+
+<p>So addition is defined recursively in that the definition calls itself, and under the restriction that for defining the outcome for <code class="language-plaintext highlighter-rouge">x+1</code> in the induction case, only <code class="language-plaintext highlighter-rouge">x+y</code> is used, not an arbitrary recursive call to plus.</p>
+
+<p>The question then is:</p>
+
+<blockquote>
+  <p>Are all recursive functions also representable by primitive recursion. Or is being primitive recursive a restriction?</p>
+</blockquote>
+
+<p>The answer is <strong>yes</strong>, it’s a restriction for sure. All primitive recursive functions terminate, which is a consequence of the fact that the recursion calls the function on a smaller argument. On the other hand, general recursion easily allows non-terminating procedures. Earlier in this post, there was a minimal example for that.</p>
+
+<h3 id="why-is-ackermann-not-primitive-recursive-in-the-standard-set-up">Why is Ackermann not primitive recursive (in the standard set-up)?</h3>
+
+<p>So far so good. We got a feeling that being primitive is a restriction on general recursion. To see that the Ackermann function is not primitive recursive is not obvious. Note that it’s not good enough to observe that its definition does not follow the required primitive-recursive schema: One has to make the argument that it cannot somehow be written up in a different way that fits the scheme.</p>
+
+<p>Generally speaking, the Ackermann function is not primitive-recursive as it ``grows too fast’’. We don’t provide the argument formally, but the idea is quite simple. Looking at the primitive recursive schema sketched above, it has the feel of an <strong>iterative loop</strong> with a fixed <strong>bound</strong>, like <code class="language-plaintext highlighter-rouge">for i = 0 to n do ...</code>. Programming with for-loops with a fixed bound results in terminating programs, analogous to the fact that all primitive-recursive programs are terming. That’s in contrast to programs using general ``while’’ loop, resp. programs using general recursion.</p>
+
+<p>A primitive recursive definition builds a new function using the primitive recursion schema corresponding to a for-loop iteration and using earlier defined primitive recursive functions as building block, which themselves are iterative schemes. That corresponds to a stack of nested iteration loops.</p>
+
+<p>For illustration: as we have seen, addition can be defined using the successor function iteratively. One could continue to define multiplication as iterative addition. And exponentiation as iterated multiplication. SICP shows how that’s done in Scheme, though without mentioning that the recursions and iterations could be classified as ``primitive’’ (see Sections 1.1.3 and 1.1.4)</p>
+
+<p>At any rate, taking the successor function as basic, multiplication can be represented by one loop (or using one primitive recursion scheme), exponentiation using 2 nested loops, and one could continue with iterated exponentiation, and then iterate that, piling up layer after layer of looping in a nested fashion, each layer really adds expressiveness (and the potential of faster growing functions).</p>
+
+<p>So, using only such bounded loops for programming then leads to a <strong>hierarchy</strong> of functions. Those programmable with a nesting depths of at most one (like multiplication), one with a nesting depth of 2 (for example, exponentiation), etc., all programs terminating. It can be shown that this hierarchy is <strong>infinite</strong>. In other words, it’s not that there is some maximal looping depth, after which one does not need further nesting.</p>
+
+<p>But where does Ackermann fit in?</p>
+
+<blockquote>
+  <p><strong>Well, that’s the whole point: Ackermann does NOT fit into this looping hierarchy!</strong></p>
+</blockquote>
+
+<p>Ackermann’s function comed in different flavors, the one from Exercise 1.10 has 2 arguments and it’s not even the one most commonly found. There are also versions with 3 arguments and for the line of argument here, let’s assume for now we have a 3-argument formulation.</p>
+
+<p>In all formulations, the Ackermann function has one argument that corresponds roughly to the nesting level of iterative loops resp. the amount of primitive-recursive schemes. So <code class="language-plaintext highlighter-rouge">Ack(x,y,1)</code> corresponds to one looping level, and in a properly formulated 3-argument version, <code class="language-plaintext highlighter-rouge">Ack(x,y,1)</code> is <code class="language-plaintext highlighter-rouge">x+y</code> (Wikipedia starts counting at 0 instead of 1, but never mind). Continuing like that, <code class="language-plaintext highlighter-rouge">Ack(x,y,2)</code> is exponentiation <code class="language-plaintext highlighter-rouge">exp(x, y)</code> etc. This is the <strong>core</strong> of Ackermann’s idea: Define a function where one argument controls the nesting-depth of loops or the level of primitive-recursive schemes.</p>
+
+<p>And that immediately shows that Ackermann cannot be primitive-recursive. If it were, it could be written using a fixed amount of for-loops or a given amount of primitive-recursive schemes. But that’s impossible, since we said, the hierarchy of looping constructs is a real hierarchy, each new level of nesting really adds a new class of functions. Thus, <code class="language-plaintext highlighter-rouge">Ack</code> cannot fit into any specific layer, say level <code class="language-plaintext highlighter-rouge">m</code>, since <code class="language-plaintext highlighter-rouge">Ack(x,y,m+1)</code> would have to live in level <code class="language-plaintext highlighter-rouge">m+1</code>. This was meant when stating at the start of the post, that <code class="language-plaintext highlighter-rouge">Ack</code> grows too fast to be primitive recursive. Each layer limits the order of growth of functions inside that layer, but one argument of the Ackermann function, the one we called <code class="language-plaintext highlighter-rouge">m</code>, controls the growth rate of Ackermann, and since it’s the input of the function, we can make Ackermann’s function growing arbitrarily fast and too fast to fit into any specific layer.</p>
+
+<h3 id="wait-a-second-wasnt-that-a-convincing-argument-that-ackermann-is-not-primitive-recursive">Wait a second, wasn’t that a convincing argument that Ackermann is not primitive recursive?</h3>
+
+<p>Indeed, that was the outline of the standard proof showing that Ackermann is <strong>not</strong> primitive recursive, and hopefully it was convincing. But then, why the claim that Ackermann <strong>can</strong> be captured primitive-recursively, it sure can’t be both ways?</p>
+
+<p>The classic definition and the argument outlined here can be done more formally, exactly specifying what functions to use as primitive building blocks (basically successor and projection functions) and exactly the format of the primitive recursion schema (which we only sketched here on using addition as very simple example). In its standard form, primitive recursion is used to define functions over natural numbers. So functions that take natural numbers as input, and return a natural number. For instance, the Ackermann function <code class="language-plaintext highlighter-rouge">Ack(x,m)</code> is a function of that type. (BTW: Let’s switch back to a two-argument version of Ackermann, but it is not crucial for what’s being said.) So this two argument Ackermann function is of type <code class="language-plaintext highlighter-rouge">Nat * Nat -&gt; Nat</code>, and the functions definable by primitive recursion are of type <code class="language-plaintext highlighter-rouge">Nat * Nat * ... * Nat -&gt; Nat</code> (though as argued, <code class="language-plaintext highlighter-rouge">Ack</code> is not definable by primitive recursion, but it would be at least of a fitting type.)</p>
+
+<p>In this and the whole construction and set-up lies a <strong>restriction</strong>, though one that is seldom drawn attention to. Namely not only that we focus on functions over natural numbers, but that we are dealing with <strong>first-order functions</strong> over natural numbers!</p>
+
+<p>Ah, well, yaah, now that you mention it…</p>
+
+<p>Is this important, are higher-order functions something to consider? Some may consider them as curious anomalies, but in a course about functional programming one sure is comfortable with higher-order functions, they are the bread and butter of functional programming. If embracing higher-order functions, instead of struggling to encode the first-order Ackermann function of type <code class="language-plaintext highlighter-rouge">Nat * Nat -&gt; Nat</code> primitive-recursively (and fail), we can look at Ackermann as a function of type <code class="language-plaintext highlighter-rouge">Nat -&gt; Nat -&gt; Nat</code>. That’s the type of a higher-order function. It’s a function that takes a natural number as argument and returns a function (of type <code class="language-plaintext highlighter-rouge">Nat -&gt; Nat</code>).</p>
+
+<p>With this type, it’s not really the <em>same</em> function: one cannot use one version as drop-in replacement for the other. But it can be seen still as conceptionally the same function. It’s indeed easy to transform any function of type <code class="language-plaintext highlighter-rouge">A * B -&gt; C</code> into a function of type <code class="language-plaintext highlighter-rouge">A -&gt; B -&gt; C</code> and reversely. Actually, it’s not just easy to do the transformation manually, one can also easily write two functions that implement those two transformations. The transformations are known as <strong>currying</strong> and <strong>uncurrying</strong> in honor of <a href="https://en.wikipedia.org/wiki/Haskell_Curry">Haskell Brooks Curry</a> (that’s the name of a person, but of course there are also functional programming languages named after him, Haskell and the lesser known Brooks and Curry. In particular, Brooks is rather marginal. Note that Wikipedia in the article about H. Curry confuses the languages Brooks and Brook).</p>
+
+<p>Now, with this switch of perspective and freeing one’s mind from the unspoken assumption that functions need to be first-order, one can observe:</p>
+
+<blockquote>
+  <p>With higher-order functions (and currying), <strong>Ackermann’s function can be defined by primitive recursion</strong>!</p>
+</blockquote>
+
+<p>That’s known, but I think it’s fair to say, it’s much lesser known than the common knowledge that ``Ackermann is not primitive recursive.’’</p>
+
+<p>Let’s wrap it up and simply show the primitive-recursive definition for (a version of) Ackermann. It corresponds to a two argument version of Ackermann, i.e., the uncurried, first-order version would have two arguments. The higher-order version has one argument, but gives back a function. Here it is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Ack(0)       = succ
+Ack(m+1)     = Iter(Ack(m))
+
+Iter(f)(0)   = f(1)
+Iter(f)(m+1) = f(Iter(f)(m))
+</code></pre></div></div>
+
+<h3 id="how-to-do-that-in-scheme">How to do that in Scheme?</h3>
+
+<p>Ackermann can be defined in Scheme using general recursion; Exercise 1.10 in SICP shows a straightforward piece of code for that. Can one encode it primitive-recursively in Scheme, as well? Well, Scheme sure supports <strong>higher-order functions</strong> and it supports <strong>currying</strong> (defining functions using lambda-abstractions). Thus one can quite easily translate the above primitive-recursive definition into Scheme, and that is left as an exercise…</p>]]></content><author><name></name></author><category term="functionalprogramming" /><category term="functional programming" /><category term="IN2040" /><category term="scheme" /><category term="lisp" /><category term="Ackermann" /><category term="currying" /><category term="higher-order functions" /><category term="recursion" /><category term="primitive recursion" /><summary type="html"><![CDATA[A lesser known fact on Ackermann's function]]></summary></entry><entry><title type="html">Welcome to Functional programming (IN2040), autumn 2022</title><link href="/functionalprogramming/2022/06/17/fpwelcome-2022.html" rel="alternate" type="text/html" title="Welcome to Functional programming (IN2040), autumn 2022" /><published>2022-06-17T00:00:00+02:00</published><updated>2022-06-18T00:00:00+02:00</updated><id>/functionalprogramming/2022/06/17/fpwelcome-2022</id><content type="html" xml:base="/functionalprogramming/2022/06/17/fpwelcome-2022.html"><![CDATA[<h1 id="about-this-semester">About this semester</h1>
+
+<p>After a couple of corona semesters, the forthcoming one seems to be unaffected by any viruses, and things are back to normal. So right now, at the end of the spring semester, we plan for a semester in a standard, non-corona set-up.</p>
+
+<p>We should, however, keep in mind the the virus plague is not over yet and right now, towards end of June, the infection rates go up in many countries throughout Europe. Currently, there seems politically no push towards (re-)introducing restrictions, as the variants responsible for the current rise in incidences are of a ``milder’’ variety. So no cause of alarm, they say.</p>
+
+<p>I suspect, however, not even experts can foresee the future, and they base their prognostications of what will happen next autumn on what had happened last autumn. Still, the rise is disquieting, because at the beginning of this year, experts seems sure, that at least it will be a hassle-free summer, perhaps or probably there might be a next wave in autumn or winter, but in the meantime, we can all forget about viruses. But now the numbers are rising already before the calendaric summer has started.</p>
+
+<p>So we can hope for a normal and relaxed semester, but keep in mind it could turn out otherwise (again).</p>
+
+<h2 id="lectures">Lectures</h2>
+
+<p>Lectures will be held the way it used to be before corona, if someone still remembers, i.e., in the lecture hall.</p>
+
+<h3 id="youtube">youtube</h3>
+
+<p>One perhaps positive effect of the virus times was that many lectures produced video-ed versions of the presentations, like screencasts or recorded lectures. This lecture as well. We will not make a new version of the videos, there is no reason for doing that, but will link in the versions produced mostly 2020, uploaded at youtube.</p>
+
+<h3 id="language">language</h3>
+
+<p>The lecture will be given in Norwegian, at least that’s the plan. It’s actually my first lecture ever given in Norwegian. We have to see how it goes. If it’s incomprehensible, or the pronounciations unbearable, we’ll have to consider alternative solutions. In these (inofficial) pages, however, I’ll write in English, it takes too much time otherwise.</p>
+
+<h2 id="exercises-and-group-work">Exercises and group work</h2>
+
+<p>The videos are a fine supplementary information and format. Though reading the book and in particular doing the exercises is central for mastering the material. I like to compare that with learning to play the guitar. No particular reason for exactly choosing guitars as comparison, except that at the moment and since some time I try to learn doing that. Of course one can watch and listen to Eric Clapton, <a href="https://www.youtube.com/watch?v=RmdRCywCtbs">Andrés Segovia</a>, or Eddie van Halen on youtube (or whatever your top guitar hero might be), maybe watching the close-ups of the finger plays, or listening to some guitar teacher. That may be instructive, watching and reading and listening may help to correct the way you hold your guitar or your fingers, or you may see new techniques, and it sure will be inspiring and motivating, to see and listen to some masters.</p>
+
+<p>But unless one strums the six strings with one’s own fingers, starting with simple chords, and gradually advancing the level of difficulty, one will never get far.</p>
+
+<p>And the same here. Therefore, doing the exercises is important!</p>
+
+<blockquote>
+  <p>Learning is not the product of teaching. Learning is the product of the activity of learners. (John Holt)</p>
+</blockquote>]]></content><author><name></name></author><category term="functionalprogramming" /><category term="functional programming" /><category term="IN2040" /><category term="scheme" /><category term="lisp" /><summary type="html"><![CDATA[]]></summary></entry></feed>
