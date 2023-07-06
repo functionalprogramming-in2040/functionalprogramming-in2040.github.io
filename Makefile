@@ -7,11 +7,16 @@ bserve:
 
 
 realexport:
-	bundle exec jekyll build -d   ~/cor/teaching/2040-test/IN2040-test.pages.github.uio.no/
+	bundle exec jekyll build -d   ~/cor/teaching/2040/IN2040-test.pages.github.uio.no/docs/
+
+## https://github.uio.no/IN2040-test/IN2040-test.pages.github.uio.no/blob/main/docs/index.html
 
 
-testrealexport:
-	bundle exec jekyll build -d     ~/cor/teaching/in2040test.github.io/
+## localwebpage
+
+
+realexportio:
+	bundle exec jekyll build -d   ~/cor/teaching/2040/in2040test.github.io/
 
 
 

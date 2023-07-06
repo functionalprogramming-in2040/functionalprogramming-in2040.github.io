@@ -9,14 +9,19 @@
   <head>
     <meta charset="utf-8">
 
-<!-- begin _includes/seo.html --><title>Recursion, primitive or otherwise - IN2040 SICP</title>
+<!-- begin _includes/seo.html --><title>Recursion, primitive or otherwise - IN2040 FP</title>
 <meta name="description" content="A lesser known fact on Ackermann’s function">
 
+
+  <meta name="author" content=" ">
+  
+  <meta property="article:author" content=" ">
+  
 
 
 <meta property="og:type" content="article">
 <meta property="og:locale" content="en_US">
-<meta property="og:site_name" content="IN2040 SICP">
+<meta property="og:site_name" content="IN2040 FP">
 <meta property="og:title" content="Recursion, primitive or otherwise">
 <meta property="og:url" content="/functionalprogramming/2022/07/07/ackermann.html">
 
@@ -66,7 +71,7 @@
 
 
 
-  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="IN2040 SICP Feed">
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="IN2040 FP Feed">
 
 
 <!-- https://t.co/dKP3o1e -->
@@ -112,11 +117,19 @@
       <nav id="site-nav" class="greedy-nav">
         
         <a class="site-title" href="/">
-          IN2040 SICP
+          IN2040 FP
           
         </a>
         <ul class="visible-links"><li class="masthead__menu-item">
-              <a href="/menu/official">official</a>
+              <a href="/teaching/fp/menu/lectures">lectures</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/coursework">coursework</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/overview">overview</a>
+            </li><li class="masthead__menu-item">
+              <a href="/blog/blog.html">blog</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/sitemap/">sitemap</a>
             </li></ul>
         
         <button class="greedy-nav__toggle hidden" type="button">
@@ -141,7 +154,7 @@
 
 
 <div class="page__hero--overlay"
-  style=" background-image: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url('/assets/images/sicp-scale.jpg');"
+  style="background-color: #f57f17; background-image: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url('/assets/images/sicp-scale.jpg');"
 >
   
     <div class="wrapper">
@@ -157,6 +170,24 @@
       
       
 
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          14 minute read
+        
+      </span>
+    
+  </p>
+
 
       
       
@@ -171,6 +202,113 @@
 
 <div id="main" role="main">
   
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name"> </h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">UiO, IFI</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://www.uio.no/studier/emner/matnat/ifi/IN2040/" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">home</span></a></li>
+          
+        
+          
+            <li><a href="mailto:in2040-hjelp@ifi.uio.no" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.uio.no/IN2040/h23" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">github (for group work)</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
 
 
   <div class="archive">
@@ -320,8 +458,14 @@ Iter(f)(m+1) = f(Iter(f)(m))
   
   
     <li>
+      <a href="#2023">
+        <strong>2023</strong> <span class="taxonomy__count">2</span>
+      </a>
+    </li>
+  
+    <li>
       <a href="#2022">
-        <strong>2022</strong> <span class="taxonomy__count">4</span>
+        <strong>2022</strong> <span class="taxonomy__count">3</span>
       </a>
     </li>
   
@@ -329,6 +473,94 @@ Iter(f)(m+1) = f(Iter(f)(m))
 
 
 
+
+  <section id="2023" class="taxonomy__section">
+    <h2 class="archive__subtitle">2023</h2>
+    <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2023/02/07/churchnums.html" rel="permalink">Y not code up $n!$ with no recursion and no Y tricks either?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          27 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A glance at Church numerals, inductive data types, and pattern matching
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2023/01/21/ycombinator.html" rel="permalink">Y Y?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          17 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">or why Y?
+</p>
+  </article>
+</div>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to Top &uarr;</a>
+  </section>
 
   <section id="2022" class="taxonomy__section">
     <h2 class="archive__subtitle">2022</h2>
@@ -349,30 +581,26 @@ Iter(f)(m+1) = f(Iter(f)(m))
     </h2>
     
 
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          16 minute read
+        
+      </span>
+    
+  </p>
+
 
     <p class="archive__item-excerpt" itemprop="description">
-</p>
-  </article>
-</div>
-
-      
-        
-
-
-
-<div class="list__item">
-  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
-    
-    <h2 class="archive__item-title no_toc" itemprop="headline">
-      
-        <a href="/functionalprogramming/2022/10/13/ycombinator.html" rel="permalink">Y Y?
-</a>
-      
-    </h2>
-    
-
-
-    <p class="archive__item-excerpt" itemprop="description">or why Y?
 </p>
   </article>
 </div>
@@ -392,6 +620,24 @@ Iter(f)(m+1) = f(Iter(f)(m))
       
     </h2>
     
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          14 minute read
+        
+      </span>
+    
+  </p>
 
 
     <p class="archive__item-excerpt" itemprop="description">A lesser known fact on Ackermann’s function
@@ -414,6 +660,24 @@ Iter(f)(m+1) = f(Iter(f)(m))
       
     </h2>
     
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
 
 
     <p class="archive__item-excerpt" itemprop="description">
@@ -450,7 +714,7 @@ Iter(f)(m+1) = f(Iter(f)(m))
   </ul>
 </div>
 
-<div class="page__footer-copyright">&copy; 2023 IN2040 SICP. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+<div class="page__footer-copyright">&copy; 2023 IN2040 FP. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
 
       </footer>
     </div>
@@ -465,6 +729,23 @@ Iter(f)(m+1) = f(Iter(f)(m))
 
 
 
+
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+   MathJax.Hub.Config({
+     extensions: ["tex2jax.js"],
+     jax: ["input/TeX", "output/HTML-CSS"],
+     tex2jax: {
+       inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+       displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+       processEscapes: true
+     },
+     "HTML-CSS": { availableFonts: ["TeX"] }
+   });
+</script>
 
 
   </body>
