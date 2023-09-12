@@ -182,7 +182,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          15 minute read
+          16 minute read
         
       </span>
     
@@ -348,7 +348,7 @@
 
 <p>is meaningless i.e., leads to a runtime error. Being a functional language at its very core, imperative aspects take a bit of a backseat in Scheme/Lisp, and thus the syntax for assignment is specially marked by <code class="language-plaintext highlighter-rouge">!</code> (“bang”), at least in the Scheme dialect, as a warning sign to the programmer, not to expect referential transparency here.</p>
 
-<p>Of course, there are many languages that are not centered around procedures, functions etc. but are imperative at their core. Most widely used programming languages, including object-oriented ones, are imperative. Destructive assignment is take so much for granted in most languages that it often does not even specifically mentioned, like “let’s introduce assignment as destructive operation”, the qualifier “destructive” will not show up in any textbook about Java, maybe not even “imperative”. Also the syntax for assignment is typically less conspicuous. Since imperative operations are just the standard way of programming there’s not need to highlight them with a warning <code class="language-plaintext highlighter-rouge">!</code>, and so <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> is just written as <code class="language-plaintext highlighter-rouge">x = x+1</code>, using <code class="language-plaintext highlighter-rouge">=</code> as symbol for assignment.</p>
+<p>Of course, there are many languages that are not centered around procedures, functions etc. but are imperative at their core. Most widely used programming languages, including object-oriented ones, are imperative. Destructive assignment is taken so much for granted in most languages that it often does not even specifically mentioned, like “let’s introduce assignment as destructive operation”, the qualifier “destructive” will not show up in any textbook about Java, maybe not even “imperative”. Also the syntax for assignment is typically less conspicuous. Since imperative operations are just the standard way of programming there’s not need to highlight them with a warning <code class="language-plaintext highlighter-rouge">!</code>, and so <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> is just written as <code class="language-plaintext highlighter-rouge">x = x+1</code>, using <code class="language-plaintext highlighter-rouge">=</code> as symbol for assignment.</p>
 
 <p>As a side remark: Especially disciples of functional programming find it unfortunate that the equality sign <code class="language-plaintext highlighter-rouge">=</code> is (mis-)used in many languages for something that is not equality, but imperative assignment. For example, in C-like languages, <code class="language-plaintext highlighter-rouge">==</code> represents equality, and <code class="language-plaintext highlighter-rouge">=</code> represents assignment, but there are other languages, where assignment may be written <code class="language-plaintext highlighter-rouge">:=</code> or similar.</p>
 
@@ -358,8 +358,6 @@
 </code></pre>
 
 <p>even though it might not be a recommended coding style.</p>
-
-<p>value of everything and the cost of nothing</p>
 
 <h1 id="what-about-strategies">What about strategies?</h1>
 
@@ -381,16 +379,18 @@
 
 <h2 id="but-does-it-matter">But does it matter?</h2>
 
-<p>That’s a legitimate question, and the answer is: yes and no. Looking at the above simple numeric expression, the outcome is 0, independent of whether one calculates <code class="language-plaintext highlighter-rouge">6 + 4</code> before <code class="language-plaintext highlighter-rouge">5 * 2</code>, or the other way around. That’s what referential transparency is about: the value of, for instance <code class="language-plaintext highlighter-rouge">6 + 4</code>, namely 10, is independent from whether it’s calculated before <code class="language-plaintext highlighter-rouge">5 * 2</code> or afterward (or in parallel …), so in that sense the evaluation strategy or order does not matter. Of course, an interpreter will choose typically a particular order, like evaluating expressions like the one shown from left to right. Or a compiler realized the same evaluation order, generating (machine) code that calculates the result of the left sub-expression before it calculates that of the one on the right (and before calculating the end result), since it has to calculate them in <em>some</em> order (if not parallelizing the task and using some multi-core architecture or similar) .</p>
+<p>That’s a legitimate question, and the answer is: yes and no. Looking at the above simple numeric expression, the outcome is 0, independent of whether one calculates <code class="language-plaintext highlighter-rouge">6 + 4</code> before <code class="language-plaintext highlighter-rouge">5 * 2</code>, or the other way around. That’s what referential transparency is about: the value of, for instance <code class="language-plaintext highlighter-rouge">6 + 4</code>, namely 10, is independent from whether it’s calculated before <code class="language-plaintext highlighter-rouge">5 * 2</code> or afterward (or in parallel …), so in that sense the evaluation strategy or order does not matter. Of course, an interpreter will choose typically a particular order, like evaluating expressions like the one shown from left to right. Or a compiler realizes the same evaluation order, generating (machine) code that calculates the result of the left sub-expression before it calculates that of the one on the right (and before calculating the end result), since it has to calculate them in <em>some</em> order (if not parallelizing the task and using some multi-core architecture or similar) .</p>
 
-<p>That was argumentation that the evaluation strategy does not matter, at least is such purely functional or mathematical expressions, but actually the numerical example does not even touch on the two strategies mentioned above, applicative order vs. normal order. The reason being that the example does not really uses procedures, at least not user-defined ones, but calls only primitive procedures or operations, like <code class="language-plaintext highlighter-rouge">+</code> that do whatever needs to be done, without that one knows how they do it or how their procedure body looks like. Perhaps an operation using <code class="language-plaintext highlighter-rouge">+</code> is not even evaluated inside Scheme or the programming language , but handed over ultimately to some arithmetic hardware.</p>
+<p>That was an argument that the evaluation strategy does not matter, at least is such purely functional or mathematical expressions, but actually the numerical example does not even touch on the two strategies mentioned above, applicative order vs. normal order. The reason being that the example does not really uses procedures, at least not user-defined ones, but calls only primitive procedures or operations, like <code class="language-plaintext highlighter-rouge">+</code> that do whatever needs to be done, without that one knows how they do it or how their procedure body looks like. Perhaps an operation using <code class="language-plaintext highlighter-rouge">+</code> is not even evaluated inside Scheme or the programming language , but handed over ultimately to some arithmetic hardware.</p>
 
-<p>As said, strategy is about making choices, and the “evaluate subexpressions or arguments to a procedure from left to right” is a “strategic” choice that was not even mentioned in the lecture. Simply because it’s not really relevant. A left-to-right version of Scheme (or some other language) is not different from a right-to-left version, at least not in any relevant way that would justify to give it special attention or names like “l-order evaluation” or “r-order evaluation”. Of course, in a language with side-effects, calling a function on arguments, where the argument have side-effects or using expressions where sub-expressions have side effects, it matters insofar as changing the order of evaluating the arguments may well change the outcome. Indeed, some imperative programming language explicitly <em>specify</em> that the order of evaluating the arguments of a procedure is <em>unspecified</em>. In other words, a programmer should not rely on that arguments are evaluated from left to right. For arguments without side-effects it would not matter anyhow, and arguments with side effects are bad coding style anyway. And as said initially, the word “evaluation” is best use for side-effect-free expressions anyway, as only then one is interested exclusively in an expression’s value. With side-effects the word “evaluation” and thus evaluation strategy is not too fitting anyway.</p>
+<p>As said, strategy is about making choices, and the “evaluate subexpressions or arguments to a procedure from left to right” is a “strategic” choice that was not even mentioned in the lecture. Simply because it’s not really relevant. A left-to-right version of Scheme (or some other language) is not different from a right-to-left version, at least not in any relevant way that would justify to give it special attention or names like “l-order evaluation” or “r-order evaluation” (and Scheme standards are explicit about that the standard does <strong>not</strong> prescribe an order, so the programmer should not assume one particular one).</p>
+
+<p>Of course, in a language with side-effects, calling a function on arguments, where the argument have side-effects or using expressions where sub-expressions have side effects, it matters insofar as changing the order of evaluating the arguments may well change the outcome. Indeed, some imperative programming language explicitly <em>specify</em> that the order of evaluating the arguments of a procedure is <em>unspecified</em>. In other words, a programmer should not rely on that arguments are evaluated from left to right. For arguments without side-effects it would not matter anyhow, and arguments with side effects are bad coding style anyway. And as said initially, the word “evaluation” is best use for side-effect-free expressions anyway, as only then one is interested exclusively in an expression’s value. With side-effects the word “evaluation” and thus evaluation strategy is not too fitting anyway.</p>
 
 <p>The strategic decision connected to the evaluation order does not regulate what happens if a procedure has multiple arguments (that’s a boring decision, as argued), but</p>
 
 <blockquote>
-  <p>when to evaluated an argument in a procedure application or function call (resp. the arguments of the application, if there are more than one)</p>
+  <p><strong>when</strong> to evaluate an argument in a procedure application or function call (resp. the arguments of the application, if there are more than one)</p>
 </blockquote>
 
 <p>Let’s take the example of the square-function. In Scheme, it’s plausibly defined as</p>
@@ -546,7 +546,7 @@
       <span class="page__meta-readtime">
         <i class="far fa-clock" aria-hidden="true"></i>
         
-          15 minute read
+          16 minute read
         
       </span>
     
