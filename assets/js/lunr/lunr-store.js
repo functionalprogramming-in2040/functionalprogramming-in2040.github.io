@@ -16,4 +16,10 @@ var store = [{
         "tags": ["functional programming","IN2040","scheme","lisp","evaluation strategy","normal-order evaluation strategy","applicative-order evaluation strategy","referential transparency"],
         "url": "/functionalprogramming/2023/09/11/evaluationstrategies.html",
         "teaser": null
+      },{
+        "title": "Recursion, primitive or otherwise",
+        "excerpt":"The SICP textbook shows in Exercise 1.10 a famous function known as Ackermann’s function. Actually the code there shows one version of that function; there are minor variations of it, all doing basically the same, and all known as Ackermann function. The exercise is not on the list of exercises...","categories": ["functionalprogramming"],
+        "tags": ["functional programming","IN2040","scheme","lisp","Ackermann","currying","higher-order functions","recursion","primitive recursion"],
+        "url": "/functionalprogramming/2023/09/13/ackermann.html",
+        "teaser": null
       }]
