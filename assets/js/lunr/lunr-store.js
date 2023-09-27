@@ -24,7 +24,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Processes and procedures",
-        "excerpt":"Via feedback from the group sessions heard that the concepts as presented in the lecture (and SICP) remained shady and a bit unclear (at least for some). Thus I thought, I write a few lines on the concepts. I won’t repeat the examples and sentences from SICP, there is a...","categories": ["functionalprogramming"],
+        "excerpt":"From the group sessions I got feedback that the concepts as presented in the lecture (and SICP) remained shady and a bit unclear (at least for some). Thus I thought, I write a few lines on the concepts. I won’t repeat the examples and sentences from SICP; there is Section...","categories": ["functionalprogramming"],
         "tags": ["procedure","process","function"],
         "url": "/functionalprogramming/2023/09/26/processprocedure.html",
         "teaser": null
