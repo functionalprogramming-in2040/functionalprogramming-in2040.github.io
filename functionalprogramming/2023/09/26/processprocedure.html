@@ -1,0 +1,667 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>Processes and procedures - IN2040 FP</title>
+<meta name="description" content="and functions too">
+
+
+  <meta name="author" content=" ">
+  
+  <meta property="article:author" content=" ">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="IN2040 FP">
+<meta property="og:title" content="Processes and procedures">
+<meta property="og:url" content="/functionalprogramming/2023/09/26/processprocedure.html">
+
+
+  <meta property="og:description" content="and functions too">
+
+
+
+  <meta property="og:image" content="/static/assets/images/sicp-scale.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2023-09-26T00:00:00+02:00">
+
+
+
+  <meta property="article:modified_time" content="2022-10-10T00:00:00+02:00">
+
+
+
+
+<link rel="canonical" href="/functionalprogramming/2023/09/26/processprocedure.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="IN2040 FP Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--posts">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          IN2040 FP
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/lectures">lectures</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/coursework">coursework</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/overview">overview</a>
+            </li><li class="masthead__menu-item">
+              <a href="/blog/blog.html">blog</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/sitemap/">sitemap</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style="background-color: #f57f17; background-image: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url('/static/assets/images/sicp-scale.jpg');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          Processes and procedures
+
+        
+      </h1>
+      
+        <p class="page__lead">and functions too
+</p>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          9 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name"> </h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">UiO, IFI</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://www.uio.no/studier/emner/matnat/ifi/IN2040/" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">home</span></a></li>
+          
+        
+          
+            <li><a href="mailto:in2040-hjelp@ifi.uio.no" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.uio.no/IN2040/h23" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">github (for group work)</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <div class="archive">
+    
+    <p>Via feedback from the group sessions heared that the concepts as presented in the lecture (and SICP) remained shady and a bit unclear (at least for some). Thus I thought, I write a few lines on the concepts.</p>
+
+<p>I won’t repeat the examples and sentences from SICP, there is a Section 1.2 (Procedures and the processes generate) which is intended to clarify the matter. Instead I “talk around” the concepts a bit.</p>
+
+<p>To start with, it’s a terminology question, a question about the (use of) words. Using the correct words and using words correctly is course important, one needs to know the technical terms to communicate efficiently and understand texts. But terminology is only use up-to a point, and words may not and cannot be used 100% precise; natural language is not as precise like a mathematical definitional or a piece of code, so there is always some slack.</p>
+
+<p>What is maybe worse is, that different communities may use words differently. That applies also to the concepts discussed here, in particular “function” and “procedures”. In other programming languages, even in other Lisp/Scheme material, the words may be used slightly differently. In general, not only is Scheme a language that differs in many ways from many other languages, but the book SICP is quite idiosyncratic in it’s use of words, i.e., it makes choices sometimes to use words different from what the (programming languages) world outside the book does. Examples for that is “tail-recursion” and the (non-)use of the word of “closures”.</p>
+
+<p>However, the book is <strong>consistent</strong> and <strong>clear</strong> in their choices and use their words carefully.</p>
+
+<h1 id="procedures-and-processes">Procedures and processes</h1>
+
+<p>Now, what’s procedures and processes. Those are different (but related) concepts in every programming language (as long as they allow support “procedures” which all do; whether what we call procedures here are called procedures or maybe function elsequere, is a separate question). When studying a textbook about some language “X” (which may even be Scheme), it does not mean one will encounter a discussion about “processes”. One can learn a language and to use it and solve problems without thinking about it, at least to some extent. Still, as long as the programming languages one is studying is real in the sense of being run on a computer (interpreted in an interpreter or virtual machine or compiled and then run), the concept of process exist in princile</p>
+
+<p>Anyway, A <strong>process is a piece of code under execution</strong> (here code arranged in a functional manner based on procedures).</p>
+
+<p>While other textbooks may do their presentation without mentioning the concept of processes, SICP does. One should also keep in mind, the title of the book is not ``An introductory course to Scheme programming’’, but “Structure and interpretation of computer programs”, so one important part is not just to solve problems, but also to understand, how programs are interpreted, i.e., run on an interpreter.</p>
+
+<p>The discussion about processes and procedures is done in connection with recursion, in particular distinguishing between <strong>linear recursion</strong>, <strong>tail recursion</strong>, and <strong>tree recursion</strong>. That is don’t by looking at how corresponding pieces of code, the procedures, are <strong>run</strong>. That means, how they are <strong>evaluated</strong>. A procedure being run (or executed or evaluated) corresponds a <strong>processes</strong>. That’s why I said all programming languages will have the concept of “processes”, whether they use that particular word, or whether they discuss at all what happens when running a “procedure” does not matter. As long as a piece of code is run, there is a <strong>run-time entity</strong> which we call process. That’s why section 1.2 in SCIP is also called “procedures and processes they generate”.</p>
+
+<p>That was a <strong>general</strong> remark about processes. The pictures in Section 1.2 SICP are of course exactly that: pictorial representations (SICP also uses the word “vizualization”) of what’s going on when a procedure (here <code class="language-plaintext highlighter-rouge">fac</code>, and the iterative version of <code class="language-plaintext highlighter-rouge">fac</code> and finally <code class="language-plaintext highlighter-rouge">fib</code>) is run. In that way the pictures describe (aspects of) the corresponding processes, resp. how those processes evolve.</p>
+
+<p>While I said, that the concept of “process” exits in all programming languages insofar all programs in all languages are supposed to be run, the concrete pictures here are more specific for the current setting in SICP. The visualizations rely on the so-called <strong>substitution model</strong>. That’s an “explanation” of the behavior of a process where applying a procedure to values means <strong>substituting</strong> the formal parameters by the actual parameters (and then continue from there). The model as presented here not only relies on replacings formal parameters by the actual parameters. Additionally, it’s required that the arguments are evaluated first, i.e., the arguments are already <strong>values</strong>. The model thus corresponds to what is also known as the <strong>call-by-value</strong> mechanism, one important, arguably the most important <strong>parameter passing</strong> mechanism.</p>
+
+<p>Using <strong>substitution</strong> as explanation of what happens when calling a function is not unique for Scheme, one can use that also for other programming languages. But it’s rarely done, because most languages are not functional and substitution as explanation or model works <strong>only in a purely functional setting</strong>. Indeed, as soon as we introduce side-effects and things like <code class="language-plaintext highlighter-rouge">set!</code> in week 6, it also breaks down for Scheme and has to be replaced by something more complex. Thus, the section <strong>here</strong> uses the substitution model when showing the behavior of the processes. And the intention of the visualization is to give an impression of the <strong>memory usages</strong> (for instance iterative vs. recursive). It just uses a sequence of S-expressions that evolve with substitutions and following applicative-order evaluation (= call-by-value) (because that’s what we have seen so far). But even later, when we have abandoned the substitution model (or in other languages), the effect that iterative processes (or loops) have a constant memory footprint, whereas recursive ones have a growing memory usage (also called the <strong>stack</strong>…) still holds true, independent from any visualization.</p>
+
+<p>One could and probably should be more precise and saying that is a piece of <strong>sequential</strong> code under execution, at least in standard terminology. If one starts considering concurrency or parallelism, everything get more complex. In the lecture, side-effects is introduced as a “radical” departure from the functional setting. But the departuar would be only really radical, when introducing <strong>concurrency</strong> (and the terminology of <strong>process</strong> woudl need much more elaboration and would have a wider range of meanings). Concurrency and parallelism is a immensely large field in its own and Scheme is not the language that comes first to one’s mind when talking about concurrency an parallelism. Some Scheme variations support parallelism and concurrent programming, and functional languages promise to be easily be parallelized. The lecture will only touch upon concurrency and parallelism very briefly and impressionistically, and also here in this text, we cannot go deeper and for instance discuss the word <strong>process</strong> in a concurrent or parallel setting. For us, being concurrent or parallel as the alternative is not even on the screen, so we don’t even much mention that we are dealing sequential programs (though we do)</p>
+
+<h1 id="procedures-and-functions">Procedures and functions</h1>
+
+<p>SICP uses the words procedures and functions in a very clear way and consistently (which is a good thing, especially for a textbook). So things are pretty clear here. Functions are meant in a mathematical way, whereas procedures consist of scheme code (using <code class="language-plaintext highlighter-rouge">lambda</code> and often using <code class="language-plaintext highlighter-rouge">define</code> if one wants to give a name to the procedure). As one of the first examples in the lecture, we had “factorial”. The mathematical function is written with an exclamation mark $!$ whereas the procedure, the scheme code was called <code class="language-plaintext highlighter-rouge">fac</code>. Actually we had 2 procedures, one that was linear-recursive and one tail-recursive, both calculating the same function.</p>
+
+<p>Since those two concepts are closely related, and since its not complex, one sometimes of course relaxes a bit and sais that <code class="language-plaintext highlighter-rouge">fac</code> is a function, namely the factorial function instead of saying <code class="language-plaintext highlighter-rouge">fac</code> is a scheme variable giving a name to a procedure that represents the mathematical factorial function…</p>
+
+<p>Of course, since functions as mathematical concept have <strong>no side effects</strong>, one can have procedures that do not represent mathematical functions. Those are procedures which are not purely functional. Side-effects, for instance via <code class="language-plaintext highlighter-rouge">set!</code> in Scheme, er one way of breaking with pure functions. Another one would be <strong>non-determinism</strong>, for instance, functions that return output influenced by <strong>randomness</strong> (the procedure <code class="language-plaintext highlighter-rouge">random</code>, built-in in many Scheme dialects (though not in R5RS) is an example). Such a procedure is not purely functional, but has no side-effects. <strong>Referential transparency</strong>, which is a characteristic property of a purely functional setting, does not hold for procedures like <code class="language-plaintext highlighter-rouge">random</code>. Side remark: it’s correct that a procedure like <code class="language-plaintext highlighter-rouge">random</code> breaks referential transparency and has no side-effects. To be more precise, it has no side-effects visible to the outside, to the user of <code class="language-plaintext highlighter-rouge">random</code>. Often random-number generators, when realized in software, generate not real random numbers, but so-called <strong>pseudo random numbers</strong>, number that looks random, but but in fact are not really. A possible implementation might well rely on an internal state which is changed after each call to <code class="language-plaintext highlighter-rouge">random</code>, so internally the procedure would make use to commands like <code class="language-plaintext highlighter-rouge">set!</code>, only that this is encapsulared (like the internal state of our bank-account examples). If realized in that way, the use of <code class="language-plaintext highlighter-rouge">set!</code> is another piece of evidence why <code class="language-plaintext highlighter-rouge">random</code> is not a mathematical function.</p>
+
+<p>Clear as the concepts function vs procedures is inside SICP, outside of SICP and in other programming languages, the words are used often slightly differently. Besides the terminology we discussed, one may stumble upon two other slighly different interpretations. Those other two agree in that they don’t talk about functions in a mathematical sense at all, they focus on procedures or functions as programming construction. One common interpretation is that procedures have no return value, and functions have a return value. Alternatively, one may find definitions that say functions doen’t have side effects, procedures have. The latter is in line with our definition, because without side-effects, a procedure behaves like a mathematical function.</p>
+
+<p>Both alternative definitions are slightly diffent, but hang together. If one has a procedure that does not return a value, then, to be useful at all, it will have side-effects (note that I/O or interacting with the envioronment count as side-effect). Analously, if a procedures is not allowed to have side effects, it need to retur a value. The only situation where the two definitions disagree is for procedures with side-effects <strong>and</strong> return values. One definition would call it a function, because of the returned value, the other definition would call it a procedure, because of its side-effect.</p>
+
+<p>All is pretty simple (and uninteresting), but there are sometimes use of words that not referring just to concepts, but to language constructions. In a slighted dated language like Pascal, there are keywords <code class="language-plaintext highlighter-rouge">procedure</code> and <code class="language-plaintext highlighter-rouge">function</code>, like one has</p>
+
+<div class="language-pascal highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">procedure</span> <span class="n">Hello</span><span class="p">;</span>
+  <span class="k">begin</span>
+     <span class="n">ShowMessage</span> <span class="p">(</span><span class="s">'Hello world!'</span><span class="p">);</span>
+  <span class="k">end</span><span class="p">;</span>
+
+  <span class="k">function</span> <span class="kt">Double</span> <span class="p">(</span><span class="k">Value</span><span class="p">:</span> <span class="kt">Integer</span><span class="p">)</span> <span class="p">:</span> <span class="kt">Integer</span><span class="p">;</span>
+  <span class="k">begin</span>
+     <span class="kt">Double</span> <span class="p">:=</span> <span class="k">Value</span> <span class="p">*</span> <span class="m">2</span><span class="p">;</span>
+  <span class="k">end</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Most languages don’t feel the need to introduce different different language level constructs or keywords to make a distinction. C, actually, at least the C standard, does not even talk about procedures, everything procedural is a function (with or without side-effect, with or without value).</p>
+
+
+<ul class="taxonomy__index">
+  
+  
+    <li>
+      <a href="#2023">
+        <strong>2023</strong> <span class="taxonomy__count">4</span>
+      </a>
+    </li>
+  
+    <li>
+      <a href="#2022">
+        <strong>2022</strong> <span class="taxonomy__count">1</span>
+      </a>
+    </li>
+  
+</ul>
+
+
+
+
+  <section id="2023" class="taxonomy__section">
+    <h2 class="archive__subtitle">2023</h2>
+    <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2023/09/26/processprocedure.html" rel="permalink">Processes and procedures
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          9 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">and functions too
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2023/09/13/ackermann.html" rel="permalink">Recursion, primitive or otherwise
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          14 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A lesser known fact on Ackermann’s function, and the power of higher-order functions
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2023/09/11/evaluationstrategies.html" rel="permalink">Evaluation strategies
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          18 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2023/08/18/fpwelcome-2023.html" rel="permalink">Welcome to Functional programming (IN2040), autumn 2023
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to Top &uarr;</a>
+  </section>
+
+  <section id="2022" class="taxonomy__section">
+    <h2 class="archive__subtitle">2022</h2>
+    <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2022/06/17/fpwelcome-2022.html" rel="permalink">Welcome to Functional programming (IN2040), autumn 2022
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to Top &uarr;</a>
+  </section>
+
+
+  </div>
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2023 IN2040 FP. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+   MathJax.Hub.Config({
+     extensions: ["tex2jax.js"],
+     jax: ["input/TeX", "output/HTML-CSS"],
+     tex2jax: {
+       inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+       displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+       processEscapes: true
+     },
+     "HTML-CSS": { availableFonts: ["TeX"] }
+   });
+</script>
+
+
+  </body>
+</html>
