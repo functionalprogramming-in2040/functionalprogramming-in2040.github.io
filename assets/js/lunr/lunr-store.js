@@ -28,4 +28,10 @@ var store = [{
         "tags": ["procedure","process","function"],
         "url": "/functionalprogramming/2023/09/26/processprocedure.html",
         "teaser": null
+      },{
+        "title": "Y Y?",
+        "excerpt":"This is another post in connection with some slides shown in the lecture, which may have been a bit obscure. The text here is concretely triggered by a slide in week 9 about “recursion with anonymous procedures”. The slide showed a version of the factorial function programmed in a way...","categories": ["functionalprogramming"],
+        "tags": ["Y combinator","lambda calculus","recursion","Turing completeness","computable functions","foundation","Church numerals"],
+        "url": "/functionalprogramming/2023/10/09/ycombinator.html",
+        "teaser": null
       }]

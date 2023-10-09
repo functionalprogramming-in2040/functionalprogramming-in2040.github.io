@@ -1,4 +1,249 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-09-28T07:03:00+02:00</updated><id>/feed.xml</id><title type="html">IN2040 FP</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name> </name></author><entry><title type="html">Processes and procedures</title><link href="/functionalprogramming/2023/09/26/processprocedure.html" rel="alternate" type="text/html" title="Processes and procedures" /><published>2023-09-26T00:00:00+02:00</published><updated>2022-10-10T00:00:00+02:00</updated><id>/functionalprogramming/2023/09/26/processprocedure</id><content type="html" xml:base="/functionalprogramming/2023/09/26/processprocedure.html"><![CDATA[<p>From the group sessions I got feedback that the concepts of processes vs procedures and functions remained shady and a bit unclear (at least for some). Thus I write a few lines on that. I won’t repeat the examples and sentences from SICP; there is Section 1.2 (“Procedures and the processes generate”) which is intended to clarify the matter. Instead I “talk around” the concepts a bit.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2023-10-09T14:52:24+02:00</updated><id>/feed.xml</id><title type="html">IN2040 FP</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name> </name></author><entry><title type="html">Y Y?</title><link href="/functionalprogramming/2023/10/09/ycombinator.html" rel="alternate" type="text/html" title="Y Y?" /><published>2023-10-09T00:00:00+02:00</published><updated>2023-10-09T00:00:00+02:00</updated><id>/functionalprogramming/2023/10/09/ycombinator</id><content type="html" xml:base="/functionalprogramming/2023/10/09/ycombinator.html"><![CDATA[<p>This is another post in connection with some slides shown in the lecture, which may have been a bit obscure.</p>
+
+<p>The text here is concretely triggered by a slide in week 9 about “recursion with anonymous procedures”. The slide showed a version of the factorial function programmed in a way unlike any we have seen before (and unlike any we will see afterwards). And in fact in a rather obscure way. In fact, it’s programmed <strong>without recursion</strong>, in that there’s no procedure that calls itself, at least not in an obvious way. It only uses $λ$-expressions, i.e., only <strong>anonymous</strong> functions are used</p>
+
+<h1 id="recap-coding-factorial-using-only-anonymous-functions">Recap: Coding factorial using only anonymous functions</h1>
+
+<p>Let’s start out with a recursive definition of <code class="language-plaintext highlighter-rouge">fac</code>. <code class="language-plaintext highlighter-rouge">fac</code> is bound to a $λ$-abstraction, and in the procedure body, <code class="language-plaintext highlighter-rouge">fac</code> is mentioned and called. Probably we got used to recursive definitions meanwhile that we don’t puzzle about that too much.</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">fac</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	  <span class="mi">1</span>
+	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nf">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>Perhaps it’s worth to point out a crucial difference between <code class="language-plaintext highlighter-rouge">define</code> and <code class="language-plaintext highlighter-rouge">let</code>. It’s not possible to define <code class="language-plaintext highlighter-rouge">fac</code> using let as follows:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">fac</span>
+       <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+	 <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)</span>
+	     <span class="mi">1</span>
+	     <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nf">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>  <span class="c1">;; note that fac is</span>
+                                      <span class="c1">;; introduced via</span>
+                                      <span class="c1">;; let!</span>
+  <span class="nv">&lt;scope</span> <span class="nv">where</span> <span class="nv">fac</span> <span class="nv">is</span> <span class="nv">intended</span> <span class="nv">to</span> <span class="nv">be</span> <span class="nv">used&gt;</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Let</code> works similarly as <code class="language-plaintext highlighter-rouge">define</code> (though it has an explicitly specified scope): it binds <code class="language-plaintext highlighter-rouge">fac</code> to this lambda-expression. However, this time it won’t work as intended, as <code class="language-plaintext highlighter-rouge">fac</code> is not yet defined. If you try that example yourself in some scheme interpreter, make sure that <code class="language-plaintext highlighter-rouge">fac</code> has not already been defined earlier, otherwise it will look as if it worked insofar the correct value comes out. But in that case, the <code class="language-plaintext highlighter-rouge">fac</code> introduced via <code class="language-plaintext highlighter-rouge">let</code> simply calls the previously defined <code class="language-plaintext highlighter-rouge">let</code>, it’s not a recursive (re-)definition.</p>
+
+<p>While at it: there exists a variant (not discussed in the lecture) of <code class="language-plaintext highlighter-rouge">let</code> which would work, it’s called <code class="language-plaintext highlighter-rouge">letrec</code> and that would allow an intended recursive definition of <code class="language-plaintext highlighter-rouge">fac</code> (and in that respect works analogous to <code class="language-plaintext highlighter-rouge">define</code>).</p>
+
+<p>So far so good (and known from the lecture). But now we no longer want to use <code class="language-plaintext highlighter-rouge">define</code> to program factorial as above at least not recursively. Nor <code class="language-plaintext highlighter-rouge">letrec</code> obviously, nor <code class="language-plaintext highlighter-rouge">while</code> or other looping constructs that our favorite Scheme dialect may support (<code class="language-plaintext highlighter-rouge">while</code> is supported. Additionally one can program <code class="language-plaintext highlighter-rouge">while</code> easily oneself (using recursion) so that would not help).</p>
+
+<p>Now: let’s look at the $λ$-abstraction in isolation, i.e., the above standard definition just without giving it a name with <code class="language-plaintext highlighter-rouge">define</code>.</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+   <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+       <span class="mi">1</span>
+       <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nf">fac</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>The base case is covered, but the branch that corresponds to the recursion case is not. For $n&gt;0$, the body invokes <code class="language-plaintext highlighter-rouge">fac</code> which is undefined, resp. if it happens to be defined by coincidence from earlier, it’s probably not the factorial, as we are still struggling to get it defined. So let’s don’t rely on some unknown thing called <code class="language-plaintext highlighter-rouge">fac</code> coming from outside and probably undefined anyway, let’s hand over the missing continuation to cover the recursion case as functional argument:</p>
+
+<p><a id="org8a8a022"></a></p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    <span class="c1">;; let's refer to this function as F</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+	  <span class="mi">1</span>
+	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nf">f</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+</code></pre></div></div>
+
+<p>NB: the term “continuation” has a specific meaning in functional programming and there exists a style of programming which is called CPS, continuation passing style. We are not claiming that the above code is strictly CPS, but there is a connection: We hand over a function that describes how to continue at the end of the function body, here at least that the one possible end that corresponds to the recursive case.</p>
+
+<p>At any rate, let’s refer to the above function as $F$. Given a continuation function $f$ as argument, it corresponds to the body of the factorial.</p>
+
+<p>The base case is covered, and in the recursion case, the body uses the argument $f$ to calculate the return value. Since $f$ is an argument, it can be anything, but what is needed for $n\geq 1$, where recursion should kick in, is to calculate $F$ <strong>again</strong>, this time with the numerical argument $n-1$. And going through the body of $F$ one more round would probably not be enough. So in the next-round’s recursion case, the same problem would present itself, namely how to continue just another layer of the body, and the solution would be the same yet again: do $F$ one more time, and if needed, still another round, and on and on.</p>
+
+<p>That can be achieved by doing the following in the recursion case, calling $F$ and feeding to that next call to $F$ the function $F$ again, should that next round not be enough:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nf">F</span> <span class="nv">F</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))</span>  <span class="c1">;; recursion case in the body of F</span>
+</code></pre></div></div>
+
+<p>Since $F$ is not only called but additionally handed over as further continuation in the next recursion case, the pattern repeats itself and the pattern can continue arbitrarily long. And for the factorial function, at least with a non-negative input, after a finite amount of repeating itself, the schema will hit the base case for $n=0$, and the correct value of $n!$ will be returned.</p>
+
+<p>We are, however, not out of the woods yet. The previous code snippet mentions $F$, resp. $F F$ in the recursion case. Note that we have <strong>not officially named</strong> the higher-order function from the <a href="#org8a8a022">above Listing</a> by the name $F$ (doing <code class="language-plaintext highlighter-rouge">(define F ....)</code>: we agreed among ourselves to call it $F$ in the explanatory text, but not as part of the program.</p>
+
+<p>We could have given the anonymous function officially the name $F$ with <code class="language-plaintext highlighter-rouge">define</code>, but what we discussed was that $F$ is used as <strong>argument</strong> to that function, i.e., in place for the formal parameter $f$. Besides, if we had introduced the name $F$ for the function and then used in the the recursion case, that would be a case of direct recursion using a function’s name, that’s exactly what we don’t want to do.</p>
+
+<p>So: how can we use $F$ as argument to itself, without relying on direct recursion? That’s actually not hard, we just <strong>program it two times</strong>, and feed the second copy as argument to the first. However, as explained above, we need in the body something to the effect of <code class="language-plaintext highlighter-rouge">(* n (F F) (- n 1))</code>. That means, we need to <strong>massage</strong> the implementation $F$ in such a way, that $n-1$ is not fed as argument to $f$ (as done in $F$ and in the factorial function), but fed as argument to $f f$. That leads to the following massaged version of $F$</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    <span class="c1">;; new variant of F</span>
+   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nf">f</span> <span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))</span>  <span class="c1">;; self-application of argument f</span>
+</code></pre></div></div>
+
+<p>And if we apply that version to itself, we get the following function.</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>     
+   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	 <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nf">f</span> <span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
+ <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    
+   <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+     <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+	 <span class="mi">1</span>
+	<span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nf">f</span> <span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>And we are done, that’s the factorial!</strong></p>
+</blockquote>
+
+<p>One can test it easily on some input. Of course it looks a bit unelegant, so let’s clean it up a bit. We can introduce a name $F’$ for the massaged version of $F$ and using <code class="language-plaintext highlighter-rouge">let</code> to avoid repeating the code, and finally we can give the whole construction a conventional name, namely <code class="language-plaintext highlighter-rouge">fac</code>. Note that neither <code class="language-plaintext highlighter-rouge">let</code> nor the use of <code class="language-plaintext highlighter-rouge">define</code> for <code class="language-plaintext highlighter-rouge">fac</code> involves recursion.</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">fac</span> <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">F</span><span class="o">'</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    
+			 <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+			   <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+			       <span class="mi">1</span>
+			       <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">((</span><span class="nf">f</span> <span class="nv">f</span><span class="p">)</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))))</span>
+	      <span class="p">(</span><span class="nf">F</span><span class="o">'</span> <span class="nv">F</span><span class="o">'</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h1 id="factorial-is-fine-and-good-but-how-to-generalize-that">Factorial is fine and good, but how to generalize that?</h1>
+
+<p>The above construction is concretely done for the factorial. Fine as it is, we are interested in doing it <strong>generally</strong>, i.e., given a recursive definition of a function and turning it to one that works without recursion. And it’s not good enough to understand the way it worked for <code class="language-plaintext highlighter-rouge">fac</code>, and when dealing with another recursive definition, do the same trick again for the body of that new function. A <strong>convincing</strong> generalization would be one that does not involve us, fiddling with the code, like retyping the body $F$ into the massaged version $F’$. Instead,</p>
+
+<blockquote>
+  <p>we want to define a Scheme procedure that takes the body $F$ and <strong>directly</strong> returns the recursive procedure that corresponds to $F$!</p>
+</blockquote>
+
+<p>Also that is easy to do (kind of…), though we run into another (small) problem, at least in Scheme and similar settings.</p>
+
+<p>It’s not just desirable to avoid to massage the code of $F$ in $F’$, it is necessary to do the whole trick without having access of the actual code of $F$, because $F$ is a formal parameter of the procedure. This we are forced to treat the functional argument as <strong>black box</strong>.</p>
+
+<p>Turning $F$ to $F’$ without having access to the code of $F$ is actually quite easy. In the concrete factorial example, the code massage from $F$ to $F’$ “rewrites” the code so that a self-application $f\ f$ was used in $F’$ instead of $f$, as in $F$. We can achieve the same effect <strong>from the outside</strong>. Instead of feeding $F’$ into $F’$ and have $F’$’s body duplicate the argument $F’$ into a self-application $F’\ F’$, we just do the self-application outside and hand over $F\ F$ <strong>as argument</strong>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  (lambda (f) (F (f f)))   ;; corresponds (somehow) to F'
+</code></pre></div></div>
+
+<p>Now we can apply that construction to itself <code class="language-plaintext highlighter-rouge">((lambda (f) (F (f f))) (lambda (f) (F (f f))))</code>, doing the same trick as before in the special setting where $F$ represented the effect of the body of the factorial function. The only thing left to do is to have $F$ as argument to the construction, like the following</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(lambda (F)                ;;  F as argument
+  (lambda (f) (F (f f)))   ;; corresponds (somehow) to F'
+  (lambda (f) (F (f f)))   ;; and is applied to itself
+</code></pre></div></div>
+
+<p>We may write it also in math-notation, i.e., as expression from the $λ$-calculus, and it looks like this</p>
+
+<p><a id="org9055c5c"></a> \(\lambda F. ((\lambda f. F\ (f\ f))\ (\lambda f. F\ (f\ f)))\)</p>
+
+<p>[NB: the conventions for when and how to use parentheses in the $λ$-calculus are different from the conventions in Lisp or Scheme. One just has to be careful with that. For instance, if we had written above $F\ f \ f$ instead of $F\ (f\ f)$, it would look as if that corresponded to <code class="language-plaintext highlighter-rouge">(F f f)</code> in Scheme, but it does not; it would correspond to <code class="language-plaintext highlighter-rouge">((F f) f)</code> in Scheme (and would not do the job). Just something one needs to keep in mind.]</p>
+
+<p>Anyway, this expression is known in the $λ$-calculus as […drum rolls…]</p>
+
+<blockquote>
+  <p><strong>the $Y$-combinator</strong>!</p>
+</blockquote>
+
+<p>There are slight reformulations of that doing the same (for instance using <code class="language-plaintext highlighter-rouge">let</code>). And there are other such functions to achieve recursion, but doing it differently in a more serious manner, one of which we will (have to) look at.</p>
+
+<p>First, let’s take the above $Y$ and try it out in Scheme, giving it its traditional name first</p>
+
+<p><a id="org76de89c"></a></p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">define</span> <span class="nv">Y</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">F</span><span class="p">)</span>
+    <span class="p">((</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">F</span> <span class="p">(</span><span class="nf">x</span> <span class="nv">x</span><span class="p">)))</span>
+     <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">F</span> <span class="p">(</span><span class="nf">x</span> <span class="nv">x</span><span class="p">)))))</span>
+</code></pre></div></div>
+
+<p>resp. let’s use an equivalent reformulation with let, which is slightly shorter</p>
+
+<p><a id="org70dca9b"></a></p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">define</span> <span class="nv">Y</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">F</span><span class="p">)</span>
+      <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">f</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">F</span> <span class="p">(</span><span class="nf">x</span> <span class="nv">x</span><span class="p">)))))</span>
+	<span class="p">(</span><span class="nf">f</span> <span class="nv">f</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>So, it took some meandering, we finally came up with a Scheme procedure that corresponds to the $Y$-combinator, which is known to achieve our goal: turn a procedure body like $F$ into a <strong>recursive</strong> procedure.</p>
+
+<p>Then let’s reward ourselves and use it to run a version of factorial using the $Y$ combinator. Here’s again the body of the factorial from the beginning (see <a href="#org8a8a022">here</a>):</p>
+
+<p><a id="orgd327be2"></a></p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">define</span> <span class="nv">F</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    
+	      <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
+		<span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+		    <span class="mi">1</span>
+		    <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nf">f</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">)))))))</span>
+</code></pre></div></div>
+
+<p>and then proudly apply our $Y$ combinator to it:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  (Y F)
+</code></pre></div></div>
+
+<p>Ouch! That <strong>crashes</strong> the interpreter with a stack overflow. That’s bad news.</p>
+
+<h1 id="wait-a-second-not-so-eagerly">Wait a second, not so eagerly.</h1>
+
+<p>Crashing the interpreter is sure not desirable, but always look at the bright side: it’s <strong>good news too!</strong> The application is <em>non-terminating</em>, resp. in practice, it runs out of stack memory. That’s indeed a good sign, namely a <strong>sign of a recursion.</strong> Unfortunately a recursion gone wrong.</p>
+
+<p>At first sight, it might be puzzling: we have encoded the famous $Y$ combinator but it does not work. As mentioned, however, $Y$ is not the only combinator to achieve the trick, there are variations of the general idea of <strong>self application</strong>.</p>
+
+<p>The equation for $Y$ from <a href="#org9055c5c">above</a> was written as term of the $λ$-calculus. Scheme can be seen as an implementation of the $λ$-calculus (with additional features needed for practical programming such as I/O etc). To be precise, there are also different $λ$-calculi, including many different typed versions, but Scheme most closely resembles an <strong>untyped</strong> $λ$-calculus.</p>
+
+<p>But Scheme is a programming language, executed in a particular way, namely doing <strong>applicative order</strong>: arguments in an application need to be <strong>evaluated first</strong> before handed over in a procedure call. $λ$-calculi are often presented without fixing an evaluation strategy, resp. the evaluation strategy is left open and arbitrary. As presented in the lecture, for purely functional settings, the evaluation is based on <strong>substitution</strong>, the so-called <strong>substitution model</strong> from SICP. An expression can have multiple places where do so a substitution, i.e., multiple opportunities to apply a procedure to its argument(s), and an evaluation strategy fixes which one(s) should or could be taken. The lecture covered <strong>applicative</strong> and <strong>normal</strong> order evaluation, as the two practically relevant one for functional languages, but for the $λ$-calculus one can study more strategies (which involves where to evaluate and when to stop. Some strategies even allow multiple places in parallel or allow random choices). As a side remark, for $λ$-calculi one often speaks also of <strong>reduction strategies</strong> instead of evaluation strategies, and the basic substitution step is called a $β$-reduction step (but it’s another word for substituting the formal parameter of a function by its actual argument), and evaluation means “reducing” an expression to its value.</p>
+
+<p>Scheme uses applicative order, it follows <strong>eager evaluation</strong>. And that’s the <strong>problem</strong> here. If we apply $Y$ to $F$, $F$ gets substituted into the body of $Y$, which is another (self-)application, that needs to be evaluated. After substitution, there is another (self-)application, so the process never ends, there is each time still another application as argument, and eager evaluation requires that the argument needs to be evaluated, so it never stops:</p>
+
+\[\begin{array}[t]{l@{\qqad}l} Y\ F &amp; \rightarrow \\ \mathit{let}\ f = \lambda x. F (x\ x) \mathit{in}\ f\ f &amp; \rightarrow \\ (\lambda x. F (x\ x))\ (\lambda x. F (x\ x))&amp; \rightarrow \\ F\ ((\lambda x. F (x\ x))\ (\lambda x. F (x\ x))) &amp; \rightarrow \\ F\ (F\ ((\lambda x. F (x\ x))\ (\lambda x. F (x\ x)))) &amp; \rightarrow \ldots \end{array}\]
+
+<p>My bad, it’s recursion, but useless…</p>
+
+<p>But it can be repaired. What’s needed is to <strong>delay</strong> the further evaluation of self-application argument, something like</p>
+
+\[\begin{array}[t]{rl} (\lambda x. F\ (\mathbf{delay}\ (x\ x)))\ (\lambda x. F\ (\mathbf{delay}\ (x\ x))) &amp; \rightarrow \\ F\ (\mathbf{delay}\ ( \begin{array}[t]{l} (\lambda x. F\ (\mathbf{delay}\ (x\ x))) \\ (\lambda x. F\ (\mathbf{delay}\ (x\ x))))) \end{array} \end{array}\]
+
+<p>At that point, the argument of the outermost $F$ is not further explored, but handed over as value to $F$. After that substitution step, its an expression that looks like:</p>
+
+\[\begin{array}[t]{lll} \lambda n. &amp; \mathit{if}\ &amp; n= 0 \\ &amp; \mathit{then}\ &amp; 1 \\ &amp; \mathit{else} &amp; n \times \langle\text{self-application again (with delay)}\rangle (n-1) \end{array}\]
+
+<p>That’s a function that takes a number as argument, and does the body of the factorial and uses itself again as continuation in the recursion case. In particular, the body after $\lambda n$ is not further evaluated. It only starts getting into action when we provide a numerical argument. But this time, when giving a numerical argument, the recursion will stop, as at some point it will hit the base case, (at least for arguments $\geq 0$), just as the factorial does.</p>
+
+<p>Now how do we do that form of delaying? Not evaluating arguments in a procedure call also underlies normal-order evaluation and the closely related notion of <strong>lazy evaluation</strong>. It also called delayed evaluation (or call-by-need), just what we are looking for. The lecture discusses two special forms <code class="language-plaintext highlighter-rouge">delay</code> and <code class="language-plaintext highlighter-rouge">force</code> in that context, but we also discuss how one can delay evaluation without relying on those built-in special forms.</p>
+
+<p>It goes like this: First observe that a $λ$-expression like $\lambda x. e$ is a value, it counts as <strong>evaluated</strong>. In the $λ$-calculus, one might find places in the body $e$ where one could reduce, if one allowed substitutions to be done at any place inside an expression, not only on the top-level, but that’s not how it works in Scheme (or programming languages in general). Procedures only get evaluated when and if actually called. Now suppose that $e$ represents itself a function. It could itself be an application but after some evaluation steps it will evolve into a function. But by adding a $\lambda$ in front and applying $e$ to the formal argument $x$, we can delay the evaluation of $e$:</p>
+
+\[\lambda x. e\ x\]
+
+<p>That’s the trick that delays the evaluation of $e$ until an actual argument is provided. NB: in the $λ$-calculus, $e$ and $\lambda x. e\ x$ are said to be $η$-equivalent (“eta-equivalent”). Of course, it’s required that $e$ does not by coincidence mentions $x$ as free variable. But we can also pick another variable instead of $x$ if need be.</p>
+
+<p>The trick make sense only if $e$ corresponds to a function, so <code class="language-plaintext highlighter-rouge">(lambda (x) (1 x))</code> is not really meaningful. In the 100% pure and theoretical $λ$-calculus, everything is a function anyway and one needs not to worry. In Scheme $1$ is not a function, so we would have to be careful, but thankfully, the self-application $x x$ represents a function. So we can use the $η$-delay trick and write it up like that:</p>
+
+<p><a id="org6f66e77"></a> \(Y' = \lambda F. ((\lambda x. F\ (\lambda y. x\ x\ y))\ (\lambda x. F\ (\lambda y. x\ x\ y)))\)</p>
+
+<p>That’s also known as the <strong>strict</strong> variation of the $Y$ combinator, as it does the job for eager functional languages like Scheme (and strict means following eager / applicative order evaluation).</p>
+
+<p>And now, we are really done! For good measure, let’s just give the corresponding Scheme code.</p>
+
+<p><a id="org66a0935"></a></p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">Y</span><span class="o">'</span>
+  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">F</span><span class="p">)</span>
+    <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">f</span>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">x</span><span class="p">)</span> <span class="p">(</span><span class="nf">F</span> <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">y</span><span class="p">)</span> <span class="p">((</span><span class="nf">x</span> <span class="nv">x</span><span class="p">)</span> <span class="nv">y</span><span class="p">))))))</span>
+      <span class="p">(</span><span class="nf">f</span> <span class="nv">f</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<h1 id="wrapping-up-some-loose-ends">Wrapping up some loose ends</h1>
+
+<p>The $Y$-combinator is also called Curry’s <strong>paradoxical combinator</strong> (after Haskell Curry), and $Y$ and its variants are known as <strong>fixpoint combinators</strong>. Ultimately, those are just complicated functions or procedures, exploiting self-application in one way or the other. But why combinators? There’s no deep meaning behind it. Ultimately (and for historical reasons) a $λ$-term without free variables is called a combinator. With this terminology, <code class="language-plaintext highlighter-rouge">(lambda (x) (* x x))</code> is a combinator that calculates squares as there are no free variables. Of course if we count <code class="language-plaintext highlighter-rouge">*</code> as free variable, which we should if we take it 100% exact, then it’s not a combinator, but let’s ignore that here and no one speaks like that anyway and says “square-combinator”…. Anyway, there are versions of the $λ$-calculus that do away with variables <strong>altogether</strong>. One cannot even write down “procedures” with formal parameters, as there are <strong>no variables at all</strong> and one is forced to work with combinators only. The calculus looks quite alien, and it’s connected to <strong>combinatory logic</strong>. Indeed, the $λ$-calculus (both typed and untyped) have roots and deep connections (also) in and to logics.</p>
+
+<p>Why is it called <strong>paradoxical</strong> combinator? That has to do with said connections to logic. Curry and others invented and investigated such combinators in connection with (foundations of) logics, and $Y$ and its friends have connections to <strong>logical paradoxes</strong>.</p>
+
+<p>Why <strong>fixpoint</strong> operators? As it turns out, applying $Y$ to a function (like $F$) calculates what is called a <strong>fixpoint</strong> of its argument, like a fixpoint of $F$. A fixpoint of a function as such is easy to understand: a fixpoint of $f$ is a value $a$ such that $f(a) = a$. For our specific $F$, the fixpoint of the construction results in the factorial:</p>
+
+\[Y\ F = f_\mathit{factorial}\]
+
+<p>but it’s a general observation: A recursive function can be understood as fixpoint of a function representing the effect of its body, and a $Y$-combinator calculates the proper fixpoint.</p>
+
+<p>Proper fixpoint means, the smallest fixpoint though working out in which way to understand “small” and understand why it always exists and why it is uniquely defined would require more explanations and background. Fixpoints are quite interesting, for instance, there is a connection between “eager” and finite data structures which are smallest fixpoints of some construction and “lazy” and potentially infinite data structures, like <strong>streams</strong>, which are largest fixpoints. But we leave it at that (perhaps for a later post) as the text is getting longish already…</p>]]></content><author><name> </name></author><category term="functionalprogramming" /><category term="Y combinator" /><category term="lambda calculus" /><category term="recursion" /><category term="Turing completeness" /><category term="computable functions" /><category term="foundation" /><category term="Church numerals" /><summary type="html"><![CDATA[or why Y?]]></summary></entry><entry><title type="html">Processes and procedures</title><link href="/functionalprogramming/2023/09/26/processprocedure.html" rel="alternate" type="text/html" title="Processes and procedures" /><published>2023-09-26T00:00:00+02:00</published><updated>2022-10-10T00:00:00+02:00</updated><id>/functionalprogramming/2023/09/26/processprocedure</id><content type="html" xml:base="/functionalprogramming/2023/09/26/processprocedure.html"><![CDATA[<p>From the group sessions I got feedback that the concepts of processes vs procedures and functions remained shady and a bit unclear (at least for some). Thus I write a few lines on that. I won’t repeat the examples and sentences from SICP; there is Section 1.2 (“Procedures and the processes generate”) which is intended to clarify the matter. Instead I “talk around” the concepts a bit.</p>
 
 <p>To start with, it’s partly a terminology question, a question about (the use of) words. Using the correct words and using words correctly is course important, one needs to know the technical terms to communicate efficiently and understand texts. But terminology is only use up-to a point, and words may not and cannot be used 100% precise; natural language is not as precise like a mathematical definition or a piece of code, so there is always some slack.</p>
 
