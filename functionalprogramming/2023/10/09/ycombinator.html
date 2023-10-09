@@ -315,7 +315,7 @@
     
     <p>This is another post in connection with some slides shown in the lecture, which may have been a bit obscure.</p>
 
-<p>The text here is concretely triggered by a slide in week 9 about “recursion with anonymous procedures”. The slide showed a version of the factorial function programmed in a way unlike any we have seen before (and unlike any we will see afterwards). And in fact in a rather obscure way. In fact, it’s programmed <strong>without recursion</strong>, in that there’s no procedure that calls itself, at least not in an obvious way. It only uses $λ$-expressions, i.e., only <strong>anonymous</strong> functions are used</p>
+<p>The text here is concretely triggered by a slide in week 9 about “recursion with anonymous procedures”. The slide showed a version of the factorial function programmed in a way unlike any we have seen before (and unlike any we will see afterwards). And programmed in a rather obscure way. The factorial is programmed <strong>without recursion</strong>, in that there’s no procedure that calls itself, at least not in an obvious way. It only uses $λ$-expressions, i.e., only <strong>anonymous</strong> functions.</p>
 
 <h1 id="recap-coding-factorial-using-only-anonymous-functions">Recap: Coding factorial using only anonymous functions</h1>
 
@@ -358,9 +358,9 @@
 
 <p><a id="org8a8a022"></a></p>
 
-<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    <span class="c1">;; let's refer to this function as F</span>
-    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>
-      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span>
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">f</span><span class="p">)</span>    <span class="c1">;; let's refer to the whole</span>
+    <span class="p">(</span><span class="k">lambda</span> <span class="p">(</span><span class="nf">n</span><span class="p">)</span>  <span class="c1">;; construction here (a higher-</span>
+      <span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">=</span> <span class="nv">n</span> <span class="mi">0</span><span class="p">)</span><span class="c1">;; order function) as F</span>
 	  <span class="mi">1</span>
 	  <span class="p">(</span><span class="nb">*</span> <span class="nv">n</span> <span class="p">(</span><span class="nf">f</span> <span class="p">(</span><span class="nb">-</span> <span class="nv">n</span> <span class="mi">1</span><span class="p">))))))</span>
 </code></pre></div></div>
