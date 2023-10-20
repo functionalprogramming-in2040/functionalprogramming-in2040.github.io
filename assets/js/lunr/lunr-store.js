@@ -34,4 +34,10 @@ var store = [{
         "tags": ["Y combinator","lambda calculus","recursion","Turing completeness","computable functions","foundation","Church numerals"],
         "url": "/functionalprogramming/2023/10/09/ycombinator.html",
         "teaser": null
+      },{
+        "title": "Y not code up $n!$ with no recursion and no Y tricks either?",
+        "excerpt":"In another post, I dissected how to program recursion using anonymous functions, only. This ultimately leads to the famous $Y$-combinator. Actually, there are multiple versions of it, all doing the recursion-trick by some form of self-application. The running example in that blog post was the inevitable factorial function. If that...","categories": ["functionalprogramming"],
+        "tags": ["Church numerals","lambda calculus","induction","for loops","recursion","foundations","pattern matching","inductive data types"],
+        "url": "/functionalprogramming/2023/10/20/churchnums.html",
+        "teaser": null
       }]
