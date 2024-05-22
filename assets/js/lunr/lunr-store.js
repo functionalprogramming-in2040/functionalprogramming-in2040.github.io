@@ -40,4 +40,22 @@ var store = [{
         "tags": ["Church numerals","lambda calculus","induction","for loops","recursion","foundations","pattern matching","inductive data types"],
         "url": "/functionalprogramming/2023/10/20/churchnums.html",
         "teaser": null
+      },{
+        "title": "(Not so) abstract syntax trees",
+        "excerpt":"In weeks 11 and 12, we take a look at the meta-circular interpreter from Chapter 4 of SICP. There are different parts we discusses, the central one the mutually recursive procedure eval and apply (resp. mc-eval and mc-apply when we want to use the names as used in the slides)....","categories": ["functionalprogramming"],
+        "tags": ["scheme","meta-circular evaluator","syntax","abstract syntax"],
+        "url": "/functionalprogramming/2023/11/03/notsoast.html",
+        "teaser": null
+      },{
+        "title": "Implicit stream definitions",
+        "excerpt":"The post was triggered by working out some solution to an older exam question (from 2017), about streams. This is not a straight answer to that exam question, for that it’s much too long, but it touches on different issues that are connected to streams, evaluation strategies, and it sheds...","categories": ["functionalprogramming"],
+        "tags": ["functional programming","IN2040","Scheme","substitution and environment model","evaluation strategies"],
+        "url": "/functionalprogramming/2023/12/05/implicitstreams.html",
+        "teaser": null
+      },{
+        "title": "How to prepare for an oral exam?",
+        "excerpt":"The standard exam for the course on functional programming is written. Except for the times under corona, where it was a variation of a written exam, a “home exam”. However, the repeat exams are regularly held as oral ones. One reason is simply expedience. There are not too many candidates...","categories": ["functionalprogramming"],
+        "tags": ["exam preparation","oral exam","functional programming","SICP"],
+        "url": "/functionalprogramming/2024/01/11/howtopreparefororalfp.html",
+        "teaser": null
       }]
