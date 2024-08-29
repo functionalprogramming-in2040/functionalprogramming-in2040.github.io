@@ -6,7 +6,7 @@ var store = [{
         "teaser": null
       },{
         "title": "Evaluation strategies",
-        "excerpt":"The post is about evaluation strategies. The concept was discussed in the lecture (in week 2) and in SICP. Especially applicative order evaluation is covered, as the standard evaluation strategy of scheme. Also, an alternative to that is discussed, namely normal order evaluation, and that’s done in connection with things...","categories": ["functionalprogramming"],
+        "excerpt":"The post is about evaluation strategies. The concept is discussed in the lecture (in week 2) and in SICP. Especially applicative order evaluation is covered, as the standard evaluation strategy of Scheme. Also, an alternative to that is discussed, namely normal order evaluation, and that’s done in connection with things...","categories": ["functionalprogramming"],
         "tags": ["functional programming","IN2040","scheme","lisp","evaluation strategy","normal-order evaluation strategy","applicative-order evaluation strategy","referential transparency"],
         "url": "/functionalprogramming/2024/08/29/evaluationstrategies.html",
         "teaser": null
