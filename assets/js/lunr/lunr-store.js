@@ -10,4 +10,10 @@ var store = [{
         "tags": ["functional programming","IN2040","scheme","lisp","evaluation strategy","normal-order evaluation strategy","applicative-order evaluation strategy","referential transparency"],
         "url": "/functionalprogramming/2024/08/29/evaluationstrategies.html",
         "teaser": null
+      },{
+        "title": "What's in a name?",
+        "excerpt":"In the break during the lecture in week 2, a question came up from the audience asking for more information and explanations in connection with some slide titled “Anecdote”. Discussed at (and around) that slide ar formal parameters, free and bound variables, and the notion of scope. The slides state...","categories": ["functionalprogramming"],
+        "tags": ["functional programming","IN2040","scheme","lisp","variables","scope","variable capture","variable renaming","static scoping","dynamic scoping"],
+        "url": "/functionalprogramming/2024/09/01/bindingandscope.html",
+        "teaser": null
       }]
