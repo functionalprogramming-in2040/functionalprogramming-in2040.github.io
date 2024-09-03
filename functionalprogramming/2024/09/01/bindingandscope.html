@@ -313,7 +313,7 @@
 
   <div class="archive">
     
-    <p>In the break during the lecture in week 2, a question came up from the audience asking for more information and explanations in connection with some slide titled “Anecdote”. Discussed at (and around) that slide ar formal parameters, <strong>free</strong> and <strong>bound</strong> variables, and the notion of <strong>scope</strong>. The slides state that the names of variables are technically arbitrary, and it was mentioned that Scheme gives the user great freedom in choosing names.</p>
+    <p>In the break during the lecture in week 2, a question came up from the audience asking for more information and explanations in connection with some slide titled “Anecdote”. Discussed at (and around) that slide are formal parameters, <strong>free</strong> and <strong>bound</strong> variables, and the notion of <strong>scope</strong>. The slides state that the choice of names for variables is arbitrary, and it was mentioned that Scheme gives the user great freedom in what one can use as “name”.</p>
 
 <p>Let’s recap some of the points on the slides here (with a mildly different example). Assume the following piece of code:</p>
 
@@ -338,11 +338,11 @@
 <span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">n</span><span class="p">)</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">n</span> <span class="nv">n</span><span class="p">))</span>   <span class="c1">;; function doubles its input!</span>
 </code></pre></div></div>
 
-<p>With this renaming, the function <code class="language-plaintext highlighter-rouge">f</code> now implements the <strong>doubling</strong> it’s input, no longer increasing it by $42$. What went wrong here is that one overlooked that <code class="language-plaintext highlighter-rouge">n</code> is already mentioned in the body, it originally occurs <strong>free</strong> in the body and is bound by a definition outside the body. After carelessly renaming <code class="language-plaintext highlighter-rouge">x</code> to <code class="language-plaintext highlighter-rouge">n</code>, however, the variable will no longer be free, it will have become a bound variable. This is called <strong>variable capture</strong>. As a consequence: the choice of variable names does not matter, but only up-to a point. Renaming formal parameters that lead to variable capture <strong>changes</strong> what the program means.</p>
+<p>With this renaming, the function <code class="language-plaintext highlighter-rouge">f</code> now implements <strong>doubling</strong> its input, no longer increasing it by $42$. What went wrong here is that one overlooked that <code class="language-plaintext highlighter-rouge">n</code> is already mentioned in the body; it originally occurs <strong>free</strong> in the body and is bound by a definition outside the body. After carelessly renaming <code class="language-plaintext highlighter-rouge">x</code> to <code class="language-plaintext highlighter-rouge">n</code>, however, the variable will no longer be free, it will have become a bound variable. This is called <strong>variable capture</strong>. As a consequence: the choice of variable names does not matter, only up-to a point. Renaming formal parameters that lead to variable capture <strong>changes</strong> what the program means.</p>
 
 <p>Actually, all what’s been said so far should be known from the lecture, and that’s not what this post is about, it’s just the starting point.</p>
 
-<p>So far so good, and hopefully unspectacular. But there’s <strong>more to it</strong>, which probably was the student’s question or at least related to. What follows is also discussed on the slides.</p>
+<p>Indeed, there’s <strong>more</strong> to the issue of renaming, and that probably was the student’s question or at least related to it. What follows is <strong>not</strong> discussed on the slides.</p>
 
 <h1 id="hidden-name-capture">Hidden name “capture”?</h1>
 
