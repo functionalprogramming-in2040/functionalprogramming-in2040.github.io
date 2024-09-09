@@ -16,4 +16,10 @@ var store = [{
         "tags": ["functional programming","IN2040","scheme","lisp","variables","scope","variable capture","variable renaming","static scoping","dynamic scoping"],
         "url": "/functionalprogramming/2024/09/01/bindingandscope.html",
         "teaser": null
+      },{
+        "title": "Processes and procedures",
+        "excerpt":"Previous semester I got feedback that the concepts of processes vs procedures and functions remained shady and a bit unclear (at least for some). Thus I write a few lines on that. I won’t repeat the examples and sentences from SICP; there is Section 1.2 (“Procedures and the processes generate”)...","categories": ["functionalprogramming"],
+        "tags": ["procedure","process","function"],
+        "url": "/functionalprogramming/2024/09/09/processprocedure.html",
+        "teaser": null
       }]
