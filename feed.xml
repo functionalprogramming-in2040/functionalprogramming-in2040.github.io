@@ -1,4 +1,142 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-09T09:25:34+02:00</updated><id>/feed.xml</id><title type="html">IN2040 FP</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name> </name></author><entry><title type="html">Processes and procedures</title><link href="/functionalprogramming/2024/09/09/processprocedure.html" rel="alternate" type="text/html" title="Processes and procedures" /><published>2024-09-09T00:00:00+02:00</published><updated>2022-10-10T00:00:00+02:00</updated><id>/functionalprogramming/2024/09/09/processprocedure</id><content type="html" xml:base="/functionalprogramming/2024/09/09/processprocedure.html"><![CDATA[<p>Previous semester I got feedback that the concepts of processes vs procedures and functions remained shady and a bit unclear (at least for some). Thus I write a few lines on that. I won’t repeat the examples and sentences from SICP; there is Section 1.2 (“Procedures and the processes generate”) which is intended to clarify the matter. Instead I “talk around” the concepts a bit.</p>
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.3.1">Jekyll</generator><link href="/feed.xml" rel="self" type="application/atom+xml" /><link href="/" rel="alternate" type="text/html" /><updated>2024-09-12T10:26:15+02:00</updated><id>/feed.xml</id><title type="html">IN2040 FP</title><subtitle>Write an awesome description for your new site here. You can edit this line in _config.yml. It will appear in your document head meta (for Google search results) and in your feed.xml site description.</subtitle><author><name> </name></author><entry><title type="html">Recursion, primitive or otherwise</title><link href="/functionalprogramming/2024/09/12/ackermann.html" rel="alternate" type="text/html" title="Recursion, primitive or otherwise" /><published>2024-09-12T00:00:00+02:00</published><updated>2024-09-09T09:00:00+02:00</updated><id>/functionalprogramming/2024/09/12/ackermann</id><content type="html" xml:base="/functionalprogramming/2024/09/12/ackermann.html"><![CDATA[<p>The SICP textbook shows in <strong>Exercise 1.10</strong> a famous function known as <strong>Ackermann’s function</strong>. Actually the code there shows one version of that function; there are minor variations of it, all doing basically the same, and all known as Ackermann function. The exercise is not on the list of exercises officially discussed in the group sessions, but perhaps you have stumbled upon it or the group teacher discusses it.</p>
+
+<p>As said, the function is very well known, and it’s always discussed in connection with a concept called primitive recursion (and also that is not on the pensum of the lecture). So if one reads about primitive recursion, invariably the Ackermann function is mentioned and if the Ackermann function is discussed, then it’s discussed in connection with primitive recursion, namely pointing out that Ackermann’s function is not primitive recursive. Actually, Exercise 1.10 in SICP is an exception to that rule, it gives the definition of the function and asks to observe how it behaves but does not mention primitive recursion.</p>
+
+<h1 id="primitive-recursion">Primitive recursion</h1>
+
+<p>Ackermann’s function is the first and most prominent example of a terminating function which is not primitive recursive. That is largely the reason why it is famous. It’s also known as example for a function that grows extremely fast (that can be observed by playing around with it in Exercise 1.10). Both facts hang together; abstractly speaking, it grows too fast for any possible primitive-recursive function, while still terminating. The function is not famous for being practically useful. Also for that it grows too fast.</p>
+
+<p>So if one has ever heard of the Ackermann function at all, it’s probably exactly for that: it’s <strong>“the”</strong> example of a function that is not primitive recursive. Also googling around in the internet, starting maybe at Wikipedia and at various different other pages that offer wisdom and answers on various questions, will confirm that. You can look for questions like “What is an example of a total function that is not primitive recursive?” (answer “Ackermann”) or “what’s the Ackermann function” (answer: an example for a non-primitive-recursive function), and on and on.</p>
+
+<p>Alright, got it, Ackermann is not primitive recursive.</p>
+
+<div class="org-center">
+<p>
+<b>But that's actually not true!</b>
+</p>
+</div>
+
+<p>Or maybe I should be more modest. It’s true under only under assumptions taken for granted and left often unmentioned. It’s an assumption that maybe never even crosses the mind of people who just “know” that Ackermann is not primitive-recursive and people who write web-pages explaining Ackermann, that in fact there <strong>is</strong> a restriction.</p>
+
+<p>Participants of a course on functional programming, however, may not suffer from or at least should not suffer from that blind spot. What unspoken restriction are we talking about? I come to that in a moment, but before that, we need at least sketch what is actually meant by primitive recursion.</p>
+
+<h3 id="primitive-recursive-functions">Primitive recursive functions</h3>
+
+<p>General <strong>recursion</strong> is ubiquitous in the lecture, most functions halfway interesting use recursion. Primitive recursive functions are a restricted class of recursive functions. We don’t bother to give a precise definition of the concept; it’s easy to find it explained on the internet.</p>
+
+<p>You will remember that SICP distinguishes between recursive procedures and recursive (resp. iterative) <em>processes</em>, where processes refers to what happens at run-time. Let’s focus on what the book calls “procedures”, the code representation, not the processes.</p>
+
+<p>A recursive procedure is one that calls itself in its body. There is also indirect or mutual recursion, which is a situation where two or more procedures call each other; in software engineering circles that’s also sometimes called a “call-back” situation. Never mind. There are no restrictions on how procedures can recursively call themselves (or each other). In other words, Scheme and Lisp (and most other modern languages) support recursion in its general form, unrestricted.</p>
+
+<p>One can use recursion to easily come up with functions that don’t terminate. The simplest example is the one from <strong>Exercise 1.5</strong>, which does in fact nothing else than recursively calling itself (and thus will never terminate):</p>
+
+<div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nv">define</span> <span class="p">(</span><span class="nv">p</span><span class="p">)</span> <span class="p">(</span><span class="nv">p</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>One can then study restrictions on the use of recursion. One example is known as <strong>tail recursion</strong>. The book and the lecture uses that term in connection with the interpreter, stating that the scheme interpreter is an example of a <strong>tail recursive interpreter</strong>. More conventionally, one calls functions or procedures <strong>tail recursive</strong> and that characterizes functions, procedures, methods etc. which call themselves only “`at the end” of their body. In the terminology of SICP, that leads to an <em>iterative process</em>, not a <em>recursive process</em> (at least in an interpreter that knows how to deal with it adequately and efficiently).</p>
+
+<p>So, a tail-recursive procedure is a restricted form of a recursive procedure.</p>
+
+<p>But now to the restriction on recursion called <strong>primitive</strong>. The exact definition of primitive recursive functions involves fixing allowed elementary constructs, and projections and other details. The core of the concept, however, is the way recursion itself is allowed. It can be roughly stated as</p>
+
+<blockquote>
+  <p>A function can call itself recursively, but only on smaller arguments.</p>
+</blockquote>
+
+<p>Instead of giving the formal definition of the primitive recursion operator, we give a feeling what’s allowed and what’s not allowed by small examples. Primitive recursive functions are classically defined as functions on <strong>natural numbers</strong> as arguments and as return value. For that, being smaller is pretty obvious. Let’s look at the following function <code class="language-plaintext highlighter-rouge">f</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(define (f x y)
+  (if (= x y) y
+      (+ (f (+ x 1) y) 1)))
+
+</code></pre></div></div>
+
+<p>The function is supposed to take 2 natural numbers as argument. Additionally, let’s assume the argument for <code class="language-plaintext highlighter-rouge">x</code> is smaller or equal than <code class="language-plaintext highlighter-rouge">y</code>. Otherwise the corresponding process would not terminate. That’s a minor point, we can of course easily add a couple of lines, checking first whether the assumption is true, and if not, doing analogous calculation to cover also that situation, making it terminating for arbitrary natural numbers. But that’s not central to the discussion here.</p>
+
+<p>Now, <code class="language-plaintext highlighter-rouge">f</code> is recursive, calling itself (and it’s not tail-recursive). Now, is the function primitive-recursive? The definition of <code class="language-plaintext highlighter-rouge">(f x y)</code> calls itself with <code class="language-plaintext highlighter-rouge">(f (+ x 1) y)</code> and that is <strong>forbidden</strong> in primitive recursive schemes. So does that mean the function is not primitive recursive?</p>
+
+<p>Not so fast. The way it’s defined is certainly not the primitive-recursive way But in the same way, that one may transform non-tail-recursive procedure definitions into tail-recursive ones (the lecture had examples for that), one may reformulate sometimes non-primitive-recursive definitions so that they fit the schema. What function is it anyway, given above? It’s easy enough, it calculates <code class="language-plaintext highlighter-rouge">2y - x</code> (for <code class="language-plaintext highlighter-rouge">x</code> $\leq$ <code class="language-plaintext highlighter-rouge">y</code>).</p>
+
+<p>It turns out that this function indeed is primitive-recursive, in that one can easily define it using primitive recursion schemes. Indeed, it’s straightforward since one can define multiplication and addition and minus easily via primitive recursion. Defining the calculation <code class="language-plaintext highlighter-rouge">2y-x</code> this way seems more natural than the slightly weird recursive definition where <code class="language-plaintext highlighter-rouge">f</code> calls itself on <code class="language-plaintext highlighter-rouge">(+ n 1)</code>, but the definition was given to illustrate what is <em>not</em> allowed.</p>
+
+<p>To illustrate what <em>is</em> allowed, let’s sketch how addition of two natural numbers can be defined with primitive recursion. Actually, it corresponds to the most straightforward definition of addition (assuming that the successor function is given as a more basic operation, here written as <code class="language-plaintext highlighter-rouge">+1</code>. So <code class="language-plaintext highlighter-rouge">x +1</code> is not meant as using binary addition on <code class="language-plaintext highlighter-rouge">x</code> and 1 as arguments, but calculating the successor of <code class="language-plaintext highlighter-rouge">x</code>. We also use infix notation and equations, not Lisp-like prefix and code, though one easily could).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   0   + y = 0
+(x +1) + y = (x + y) +1
+</code></pre></div></div>
+
+<p>The primitive recursion schema generally specifies a <strong>base case</strong> (the first line in the above example) and an <strong>induction</strong> case (the second line). In the case of addition, to define <code class="language-plaintext highlighter-rouge">(x +1) + y</code>, the recursion scheme can use on the right-hand side of the equation a function <code class="language-plaintext highlighter-rouge">h</code> that takes three arguments, and allowed as arguments are <code class="language-plaintext highlighter-rouge">x</code> <code class="language-plaintext highlighter-rouge">y</code>, and <code class="language-plaintext highlighter-rouge">(x + y)</code>. Besides it could rely on earlier defined functions and some primitive operations. In our very simple example, the <code class="language-plaintext highlighter-rouge">x</code> and <code class="language-plaintext highlighter-rouge">y</code> are not needed in the construction, <code class="language-plaintext highlighter-rouge">x + y</code> is the only relevant part and the successor function <code class="language-plaintext highlighter-rouge">+1</code> is built-in. (NB: to avoid confusion: the values of <code class="language-plaintext highlighter-rouge">x</code> and <code class="language-plaintext highlighter-rouge">y</code> are not needed individually and directly as argument to the function <code class="language-plaintext highlighter-rouge">h</code>, but of course they are needed indirectly in that their sum <code class="language-plaintext highlighter-rouge">x + y</code> is used).</p>
+
+<p>So addition is defined recursively in that the definition calls itself, and under the restriction that for defining the outcome for <code class="language-plaintext highlighter-rouge">x+1</code> in the induction case, only <code class="language-plaintext highlighter-rouge">x+y</code> is used, not an arbitrary recursive call to plus.</p>
+
+<p>The question then is:</p>
+
+<blockquote>
+  <p>Are all recursive functions also representable by primitive recursion. Or is being primitive recursive a restriction?</p>
+</blockquote>
+
+<p>The answer is <strong>yes</strong>, it’s a restriction for sure. All primitive recursive functions terminate, which is a consequence of the fact that the recursion calls the function on a smaller argument. On the other hand, general recursion easily allows non-terminating procedures. Earlier in this post, there was a minimal example for that.</p>
+
+<h3 id="why-is-ackermann-not-primitive-recursive-in-the-standard-set-up">Why is Ackermann not primitive recursive (in the standard set-up)?</h3>
+
+<p>So far so good. We got a feeling that being primitive is a restriction on general recursion. To see that the Ackermann function is not primitive recursive is not obvious. Note that it’s not good enough to observe that its definition does not follow the required primitive-recursive schema: One has to make the argument that it cannot somehow be written up in a different way that fits the scheme.</p>
+
+<p>Generally speaking, the Ackermann function is not primitive-recursive as it <strong>“grows too fast”</strong>. We don’t provide the argument formally, but the idea is quite simple. Looking at the primitive recursive schema sketched above, it has the feel of an <strong>iterative loop</strong> with a fixed <strong>bound</strong>, like <code class="language-plaintext highlighter-rouge">for i = 0 to n do ...</code>. Programming with for-loops with a fixed bound results in terminating programs, analogous to the fact that all primitive-recursive programs are terming. That’s in contrast to programs using general “while” loop, resp. programs using general recursion.</p>
+
+<p>A primitive recursive definition builds a new function using the primitive recursion schema corresponding to a for-loop iteration and using earlier defined primitive recursive functions as building block, which themselves are iterative schemes. That corresponds to a stack of nested iteration loops.</p>
+
+<p>For illustration: as we have seen, addition can be defined using the successor function iteratively. One could continue to define multiplication as iterative addition. And exponentiation as iterated multiplication. SICP shows how that’s done in Scheme, though without mentioning that the recursions and iterations could be classified as “primitive” (see Sections 1.1.3 and 1.1.4)</p>
+
+<p>At any rate, taking the successor function as basic, multiplication can be represented by one loop (or using one primitive recursion scheme), exponentiation using 2 nested loops, and one could continue with iterated exponentiation, and then iterate that, piling up layer after layer of looping in a nested fashion, each layer really adds expressiveness (and the potential of faster growing functions).</p>
+
+<p>So, using only such bounded loops for programming then leads to a <strong>hierarchy</strong> of functions. Those programmable with a nesting depth of at most one (like multiplication), one with a nesting depth of 2 (for example, exponentiation), etc., all programs terminating. It can be shown that this hierarchy is <strong>infinite</strong>. In other words, it’s not that there is some maximal looping depth, after which one does not need further nesting.</p>
+
+<p>But where does Ackermann fit in?</p>
+
+<blockquote>
+  <p><strong>Well, that’s the point: Ackermann does NOT fit into this looping hierarchy!</strong></p>
+</blockquote>
+
+<p>Ackermann’s function comes in different flavors, the one from Exercise 1.10 has 2 arguments and it’s not even the one most commonly found. There are also versions with 3 arguments and for the line of argument here, let’s assume for now we have a 3-argument formulation.</p>
+
+<p>In all formulations, the Ackermann function has one argument that corresponds roughly to the nesting level of iterative loops resp. the amount of primitive-recursive schemes. So <code class="language-plaintext highlighter-rouge">Ack(x,y,1)</code> corresponds to one looping level, and in a properly formulated 3-argument version, <code class="language-plaintext highlighter-rouge">Ack(x,y,1)</code> is <code class="language-plaintext highlighter-rouge">x+y</code> (Wikipedia starts counting at 0 instead of 1, but never mind). Continuing like that, <code class="language-plaintext highlighter-rouge">Ack(x,y,2)</code> is exponentiation <code class="language-plaintext highlighter-rouge">exp(x, y)</code> etc. This is the <strong>core</strong> of Ackermann’s idea: Define a function where one argument controls the nesting-depth of loops or the level of primitive-recursive schemes.</p>
+
+<p>And that immediately shows that Ackermann cannot be primitive-recursive. If it were, it could be written using a fixed amount of for-loops or a given amount of primitive-recursive schemes. But that’s impossible, since we said, the hierarchy of looping constructs is a real hierarchy, each new level of nesting really adds a new class of functions. Thus, <code class="language-plaintext highlighter-rouge">Ack</code> cannot fit into any specific layer, say level <code class="language-plaintext highlighter-rouge">m</code>, since <code class="language-plaintext highlighter-rouge">Ack(x,y,m+1)</code> would have to live in level <code class="language-plaintext highlighter-rouge">m+1</code>. This was meant when stating at the start of the post, that <code class="language-plaintext highlighter-rouge">Ack</code> grows too fast to be primitive recursive. Each layer limits the order of growth of functions inside that layer, but one argument of the Ackermann function, the one we called <code class="language-plaintext highlighter-rouge">m</code>, controls the growth rate of Ackermann, and since it’s the input of the function, we can make Ackermann’s function growing arbitrarily fast and in fact <strong>too fast</strong> to fit into any specific layer.</p>
+
+<h3 id="wait-a-second-wasnt-that-a-convincing-argument-that-ackermann-is-not-primitive-recursive">Wait a second, wasn’t that a convincing argument that Ackermann is not primitive recursive?</h3>
+
+<p>Indeed, that was the outline of the standard proof showing that Ackermann is <strong>not</strong> primitive recursive, and hopefully it was convincing. But then, why the claim that Ackermann <strong>can</strong> be captured primitive-recursively, it sure can’t be both ways?</p>
+
+<p>The classic definition and the argument outlined here can be done more formally, exactly specifying what functions to use as primitive building blocks (basically successor and projection functions) and fixing exactly the format of the primitive recursion schema (which we only sketched here on using addition as very simple example). In its standard form, primitive recursion is used to define functions over natural numbers. So functions that take natural numbers as input, and return a natural number. For instance, the Ackermann function <code class="language-plaintext highlighter-rouge">Ack(x,m)</code> is a function of that type. (BTW: Let’s switch back to a two-argument version of Ackermann, but it is not crucial for what’s being said.) So this two argument Ackermann function is of type <code class="language-plaintext highlighter-rouge">Nat * Nat -&gt; Nat</code>, and the functions definable by primitive recursion are of type <code class="language-plaintext highlighter-rouge">Nat * Nat * ... * Nat -&gt; Nat</code> (though as argued, <code class="language-plaintext highlighter-rouge">Ack</code> is not definable by primitive recursion, but it would be at least of a fitting type.)</p>
+
+<p>In this and the whole construction and set-up lies a <strong>restriction</strong>, though one that is seldom drawn attention to. Namely not only that we focus on functions over natural numbers (which is not a real restriction), but that we are dealing with <strong>first-order functions</strong> (over natural numbers)!</p>
+
+<p>Ah, well, yaah, now that you mention it…</p>
+
+<p>Is this important, are <strong>higher-order</strong> functions something to consider? Some may consider them as curious anomalies, but in a course about functional programming one sure is comfortable with higher-order functions, they are the bread and butter of functional programming. If embracing higher-order functions, instead of struggling to encode the first-order Ackermann function of type <code class="language-plaintext highlighter-rouge">Nat * Nat -&gt; Nat</code> primitive-recursively (and fail), we can look at Ackermann as a function of type <code class="language-plaintext highlighter-rouge">Nat -&gt; Nat -&gt; Nat</code>. That’s the type of a higher-order function. It’s a function that takes a natural number as argument and returns a function (of type <code class="language-plaintext highlighter-rouge">Nat -&gt; Nat</code>).</p>
+
+<p>With this type, it’s not really the <em>same</em> function: one cannot use one version as drop-in replacement for the other. But it can be seen still as conceptionally the same function. It’s indeed easy to transform any function of type <code class="language-plaintext highlighter-rouge">A * B -&gt; C</code> into a function of type <code class="language-plaintext highlighter-rouge">A -&gt; B -&gt; C</code> and reversely. Actually, it’s not just easy to do the transformation manually, one can also easily write two functions that implement those two transformations. The transformations are known as <strong>currying</strong> and <strong>uncurrying</strong> in honor of <a href="https://en.wikipedia.org/wiki/Haskell_Curry">Haskell Brooks Curry</a> (that’s the name of a person, but of course there are also functional programming languages named after him, Haskell and the lesser known Brooks and Curry. In particular, Brooks is rather marginal. Note that Wikipedia in the article about H. Curry confuses the languages Brooks and Brook).</p>
+
+<p>Now, with this switch of perspective and freeing one’s mind from the unspoken assumption that functions need to be first-order, one can observe:</p>
+
+<blockquote>
+  <p>With higher-order functions (and currying), <strong>Ackermann’s function can be defined by primitive recursion</strong>!</p>
+</blockquote>
+
+<p>That’s known, but I think it’s fair to say, it’s much lesser known than the common knowledge that “Ackermann is not primitive recursive.” For instance, when using Wikipedia as the great one-stop source of universal wisdom and reading up on <a href="https://en.wikipedia.org/wiki/Ackermann_function">Ackermann function</a>, one get’s a quite detailed exposition including introducing primitive recursion and discussing variations of the function and other technical background, but it’s never even mentioned that the <strong>curried version of Ackerman is primitive-recursive!</strong></p>
+
+<p>Let’s wrap it up and simply show the primitive-recursive definition for (a version of) Ackermann. It corresponds to a two argument version of Ackermann, i.e., the uncurried, first-order version would have two arguments. The higher-order version has one argument, but gives back a function. Here it is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Ack(0)       = succ
+Ack(m+1)     = Iter(Ack(m))
+
+Iter(f)(0)   = f(1)
+Iter(f)(m+1) = f(Iter(f)(m))
+</code></pre></div></div>
+
+<h3 id="how-to-do-that-in-scheme">How to do that in Scheme?</h3>
+
+<p>Ackermann can be defined in Scheme using general recursion; Exercise 1.10 in SICP shows a straightforward piece of code for that. Can one encode it primitive-recursively in Scheme, as well? Well, Scheme sure supports <strong>higher-order functions</strong> and it supports <strong>currying</strong> (defining functions using lambda-abstractions). Thus one can quite easily translate the above primitive-recursive definition into Scheme, and that is left as an exercise…</p>]]></content><author><name> </name></author><category term="functionalprogramming" /><category term="functional programming" /><category term="IN2040" /><category term="scheme" /><category term="lisp" /><category term="Ackermann" /><category term="currying" /><category term="higher-order functions" /><category term="recursion" /><category term="primitive recursion" /><summary type="html"><![CDATA[A lesser known fact on Ackermann's function, and the power of higher-order functions]]></summary></entry><entry><title type="html">Processes and procedures</title><link href="/functionalprogramming/2024/09/09/processprocedure.html" rel="alternate" type="text/html" title="Processes and procedures" /><published>2024-09-09T00:00:00+02:00</published><updated>2022-10-10T00:00:00+02:00</updated><id>/functionalprogramming/2024/09/09/processprocedure</id><content type="html" xml:base="/functionalprogramming/2024/09/09/processprocedure.html"><![CDATA[<p>Previous semester I got feedback that the concepts of processes vs procedures and functions remained shady and a bit unclear (at least for some). Thus I write a few lines on that. I won’t repeat the examples and sentences from SICP; there is Section 1.2 (“Procedures and the processes generate”) which is intended to clarify the matter. Instead I “talk around” the concepts a bit.</p>
 
 <p>To start with, it’s partly a terminology question, a question about (the use of) words. Using the correct words and using words correctly is of course important, one needs to know the technical terms to communicate efficiently and understand texts. But terminology is only useful up-to a point, and words may not and cannot be used 100% precisely; natural language is not as precise like a mathematical definition or a piece of code, so there is always some slack.</p>
 
@@ -12,7 +150,7 @@
   <p>a <strong>process is a (representation of a) piece of code under execution</strong></p>
 </blockquote>
 
-<p>and here, in this section, the code is arranged in a functional manner based on procedures. When saying the code is under execution, it’s not literally meant that the the syntax of the program is transformed as it seems to be the case in the illustrations of the substitution model in the section discussing processes and procedures. In the larger context, it can also mean, that the code has been compiled to some machine code (in a compiled language), and it’s the machine code that is actually being run (as or in a process). Or some byte-code corresponding to the user code is run on a virtual machine, etc.</p>
+<p>and here, in this section, the code is arranged in a functional manner based on procedures. When saying the code is under execution, it’s not literally meant that the syntax of the program is transformed as it seems to be the case in the illustrations of the substitution model in the section discussing processes and procedures. It can also mean, that the code has been compiled to some machine code (in a compiled language), and it’s the machine code that is actually being run (as or in a process). Or some byte-code corresponding to the user code is run on a virtual machine, etc.</p>
 
 <p>The discussion about processes and procedures is done in connection with recursion, in particular distinguishing between <strong>linear recursion</strong>, <strong>tail recursion</strong>, and <strong>tree recursion</strong>. That is done by looking at how corresponding pieces of code, the procedures, are <strong>“run”</strong>. That means, how they are <strong>evaluated</strong>. A procedure being run (or executed or evaluated) corresponds to a <strong>process</strong>. That’s why section 1.2 in SICP is also called “procedures and processes they generate”. And that’s why I said all programming languages will have the concept of “processes”, whether they use that particular word, or whether they discuss at all what happens when a program is run does not matter. As long as a piece of code is run, there is a <strong>run-time entity</strong> which we call process.</p>
 
