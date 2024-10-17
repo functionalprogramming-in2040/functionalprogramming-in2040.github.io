@@ -28,4 +28,10 @@ var store = [{
         "tags": ["functional programming","IN2040","scheme","lisp","Ackermann","currying","higher-order functions","recursion","primitive recursion"],
         "url": "/functionalprogramming/2024/09/12/ackermann.html",
         "teaser": null
+      },{
+        "title": "Y Y?",
+        "excerpt":"This is another post in connection with some slides shown in the lecture, which may have been a bit obscure. The text here is concretely triggered by a slide in week 9 about “recursion with anonymous procedures”. The slide showed a version of the factorial function programmed in a way...","categories": ["functionalprogramming"],
+        "tags": ["Y combinator","lambda calculus","recursion","Turing completeness","computable functions","foundation","Church numerals"],
+        "url": "/functionalprogramming/2024/10/17/ycombinator.html",
+        "teaser": null
       }]
