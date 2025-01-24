@@ -34,4 +34,10 @@ var store = [{
         "tags": ["Y combinator","lambda calculus","recursion","Turing completeness","computable functions","foundation","Church numerals"],
         "url": "/functionalprogramming/2024/10/17/ycombinator.html",
         "teaser": null
+      },{
+        "title": "How to prepare for an oral exam?",
+        "excerpt":"The standard exam for the course on functional programming is written. Except for the times under corona, where it was a variation of a written exam, a “home exam”. However, the repeat exams are regularly held as oral ones. One reason is simply expedience. There are not too many candidates...","categories": ["functionalprogramming"],
+        "tags": ["exam preparation","oral exam","functional programming","SICP"],
+        "url": "/functionalprogramming/2025/01/24/howtopreparefororal.html",
+        "teaser": null
       }]
