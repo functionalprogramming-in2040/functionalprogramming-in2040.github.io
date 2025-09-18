@@ -321,7 +321,7 @@
 
 <h1 id="values-evaluation-and-execution">Values, evaluation, and execution</h1>
 
-<p><strong>Evaluation</strong> means to determine the <strong>value</strong> of something (like ``e-<strong>value</strong>-ation”), for us, the value of an expression or of (a part of) a program. The concept of evaluation is eminently functional; in absence of side effects, the value of an expression, in particular of function applications, is independent from when its evaluated, it does not depend on some state (which may change) and so it’s always the same. That property is also known as <strong>referential transparency</strong>. Since the value of an expression is always the same means, an expression represents nothing else than the value, it’s only not yet calculated. Like: <code class="language-plaintext highlighter-rouge">(fac 5)</code> <strong>is</strong> the same as 120, though <code class="language-plaintext highlighter-rouge">(fac 5)</code> is an unevaluated expression, and <code class="language-plaintext highlighter-rouge">120</code> is an evaluated expression (there’s nothing more to do): in ordinary language, we simply say</p>
+<p><strong>Evaluation</strong> means to determine the <strong>value</strong> of something (like “e-<strong>value</strong>-ation”), for us, the value of an expression or of (a part of) a program. The concept of evaluation is eminently functional; in absence of side effects, the value of an expression, in particular of function applications, is independent from when its evaluated, it does not depend on some state (which may change) and so it’s always the same. That property is also known as <strong>referential transparency</strong>. Since the value of an expression is always the same means, an expression represents nothing else than the value, it’s only not yet calculated. Like: <code class="language-plaintext highlighter-rouge">(fac 5)</code> <strong>is</strong> the same as 120, though <code class="language-plaintext highlighter-rouge">(fac 5)</code> is an unevaluated expression, and <code class="language-plaintext highlighter-rouge">120</code> is an evaluated expression (there’s nothing more to do): in ordinary language, we simply say</p>
 
 <blockquote>
   <p><code class="language-plaintext highlighter-rouge">(fac 5)</code> <strong>is</strong> 120</p>
@@ -335,7 +335,7 @@
 
 <p>which is shorter than to say 120 is <strong>the value of</strong> <code class="language-plaintext highlighter-rouge">(fac 5)</code> (or of 5!). One can speak of “the” value of an expression, as opposed of “a” value of an expression, as in the absence of nondeterminism (random effects), there cannot be more than one value. Those observations are also underlying the <strong>substitution model</strong> from the lecture. Actually, not just from the lecture: substitution as explanation what happens when executing a program works as long as the program is purely functional, in Scheme or other languages. Substitution means replacement, and if two things are “the same”, one can replace one by the other without that it changes anything. For instance, if one calls a procedure, say <code class="language-plaintext highlighter-rouge">square</code> on <code class="language-plaintext highlighter-rouge">(fac 5)</code> as argument, then it in a way does not matter if the body of <code class="language-plaintext highlighter-rouge">square</code> does its calculating on <code class="language-plaintext highlighter-rouge">(fac 5)</code>, the unevaluated argument expression, or on 120, because both represent the same value (namely 120). And evaluating <code class="language-plaintext highlighter-rouge">(fac 5)</code> before handing over the calculating formal parameter <code class="language-plaintext highlighter-rouge">x</code>. And referential transparency guarantees that it does not matter whether <code class="language-plaintext highlighter-rouge">(fac 5)</code> is being evaluated to 120 beforehand, i.e. before handing it over to <code class="language-plaintext highlighter-rouge">square</code> or handing over <code class="language-plaintext highlighter-rouge">(fac 5)</code> unevaluated, and let it be evaluated when evaluating the body.</p>
 
-<p>Evaluation thus refers to the “execution mechanism” for purely functional programs and expressions. Sometimes one calls evaluation also <em>reduction</em>, like that an unevaluated expression such as <code class="language-plaintext highlighter-rouge">(fac 5)</code> is reduced in a number of steps closer and closer to it ultimate value.</p>
+<p>Evaluation thus refers to the “execution mechanism” for purely functional programs and expressions. Sometimes one calls evaluation also <em>reduction</em>, like that an unevaluated expression such as <code class="language-plaintext highlighter-rouge">(fac 5)</code> is reduced in a number of steps closer and closer to its ultimate value.</p>
 
 <p>Of course, also imperative programs need to be executed. Those are not primarily run to obtain their value, but (also or mainly) for their <strong>side effects</strong>. Sometimes they don’t even result in a value, but are executed for side effects only.</p>
 
@@ -346,9 +346,9 @@
 <div class="language-lisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="nb">*</span> <span class="mi">10</span> <span class="p">(</span><span class="nv">set!</span> <span class="nv">x</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">x</span> <span class="mi">1</span><span class="p">)))</span>
 </code></pre></div></div>
 
-<p>is meaningless i.e., leads to a runtime error. Being a functional language at its very core, imperative aspects take a bit of a backseat in Scheme/Lisp, and thus the syntax for assignment is specially marked by <code class="language-plaintext highlighter-rouge">!</code> (“bang”), at least in the Scheme dialect we are using, as a warning sign to the programmer, not no longer expect referential transparency (and, connected to that, the substitution model breaks down, as well).</p>
+<p>is meaningless i.e., leads to a runtime error. Being a functional language at its very core, imperative aspects take a bit of a backseat in Scheme/Lisp, and thus the syntax for assignment is specially marked by <code class="language-plaintext highlighter-rouge">!</code> (“bang”), at least in the Scheme dialect we are using, as a warning sign to the programmer, to no longer expect referential transparency (and, connected to that, the substitution model breaks down, as well).</p>
 
-<p>Of course, there are many languages not centered around procedures, functions etc. but are imperative at their core. Many widely used programming languages, including object-oriented ones, are imperative. Destructive assignment is taken so much for granted in most languages that it often does not even specifically mentioned, like “let’s introduce assignment as destructive operation”, the qualifier “destructive” will not show up in any textbook about Java, maybe not even “imperative”. Also the syntax for assignment is typically less conspicuous. Since imperative operations are just the standard way of programming there’s not need to highlight them with a warning <code class="language-plaintext highlighter-rouge">!</code>, and so <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> is just written as <code class="language-plaintext highlighter-rouge">x = x+1</code>, using <code class="language-plaintext highlighter-rouge">=</code> as symbol for assignment.</p>
+<p>Of course, there are many languages not centered around procedures, functions etc. but are imperative at their core. Many widely used programming languages, including object-oriented ones, are imperative. Destructive assignment is taken so much for granted in most languages that it often does not even specifically mentioned, like “let’s introduce assignment as destructive operation”, the qualifier “destructive” will not show up in any textbook about Java, maybe not even the word “imperative”. Also the syntax for assignment is typically less conspicuous. Since imperative operations are just the standard way of programming there’s not need to highlight them with a warning <code class="language-plaintext highlighter-rouge">!</code>, and so <code class="language-plaintext highlighter-rouge">(set! x (+ x 1))</code> is just written as <code class="language-plaintext highlighter-rouge">x = x+1</code>, using <code class="language-plaintext highlighter-rouge">=</code> as symbol for assignment.</p>
 
 <p>As a side remark: Especially disciples of functional programming find it unfortunate that the equality sign <code class="language-plaintext highlighter-rouge">=</code> is (mis-)used in many languages for something that is not equality, but imperative assignment. For example, in C-like languages, <code class="language-plaintext highlighter-rouge">==</code> represents equality, and <code class="language-plaintext highlighter-rouge">=</code> represents assignment, but there are other languages, where assignment may be written <code class="language-plaintext highlighter-rouge">:=</code> or similar.</p>
 
@@ -361,7 +361,7 @@
 
 <h1 id="what-about-strategies">What about strategies?</h1>
 
-<p>Now that we know what evaluation is, determining the value of a (purely functional) piece of code and we know that in the presence of side-effects, one more typically speaks about execution instead (“running the program”). But why do we talk about strategies, especially evaluation strategies?</p>
+<p>Now that we know what evaluation is, namely determining the value of a (purely functional) piece of code and we know that in the presence of side-effects, one more typically speaks about execution instead (“running the program”). But why do we talk about <strong>strategies</strong>, especially evaluation strategies?</p>
 
 <p>One speaks of strategies in situations when one faces <strong>choices</strong>, how to proceed, and a strategy is a plan to make those choices. As an example from a different field, given the task to explore a graph, one can do that in different ways, for instance following a strategy of <em>depth-first</em> traversal, or <em>breadth-first</em>, to name the two most prominent strategies. The depth-first strategy, after exploring one edge , faces the choice how to proceed: to explore subsequent edges first, or explore alternative, “sibling” edges first. Depth-first traversal consistently targets the subsequent edges first.</p>
 
@@ -385,7 +385,7 @@
 
 <p>As said, strategy is about making choices, and the “evaluate sub-expressions or arguments to a procedure from left to right” is a “strategic” choice that was not even mentioned in the lecture. Simply because it’s not really relevant. A left-to-right version of Scheme (or some other language) is not different from a right-to-left version, at least not in any relevant way that would justify to give it special attention or names like “l-order evaluation” or “r-order evaluation” (and Scheme standards are explicit about that the standard does <strong>not</strong> prescribe an order, so the programmer should not assume one particular one).</p>
 
-<p>Of course, in a language with side-effects, calling a function on arguments, where the argument have side-effects or using expressions where sub-expressions have side effects, it matters insofar as changing the order of evaluating the arguments may well change the outcome. Indeed, some imperative programming language explicitly <strong>specify</strong> that the order of evaluating the arguments of a procedure is <strong>unspecified</strong>. In other words, a programmer should not rely on that arguments are evaluated from left to right. For arguments without side-effects it would not matter anyhow, and arguments with side effects are bad coding style anyway. And as said initially, the word “evaluation” is best use for side-effect-free expressions anyway, as only then one is interested exclusively in an expression’s value. With side-effects the word “evaluation” and thus evaluation strategy is not too fitting anyway.</p>
+<p>Of course, in a language with side-effects, calling a function on arguments, where the argument have side-effects or using expressions where sub-expressions have side effects, it matters insofar as changing the order of evaluating the arguments may well change the outcome. Indeed, some imperative programming language explicitly <strong>specify</strong> that the order of evaluating the arguments of a procedure is <strong>unspecified</strong>. In other words, a programmer should not rely on that arguments are evaluated from left to right. For arguments without side-effects it would not matter anyhow, and arguments with side effects are bad coding style anyway. And as said initially, the word “evaluation” is best used for side-effect-free expressions anyway, as only then one is interested exclusively in an expression’s value. With side-effects the word “evaluation” and thus evaluation strategy is not too fitting.</p>
 
 <p>The strategic decision connected to the evaluation order does not regulate what happens if a procedure has multiple arguments (that’s a boring decision, as argued), but</p>
 
@@ -476,7 +476,7 @@
 
 <p>Not only is one much less interested in the resulting value of a program in an imperative, sequential setting, there is also not much room for (evaluation or execution) strategies. A strategy is a plan to resolve choices or alternatives, but in an sequential, imperative program, there is no room for such choices. Often code is arrange in sequences of <strong>statements</strong>, maybe using also loops and conditionals etc. The statements are separated (in many languages) syntactically by <code class="language-plaintext highlighter-rouge">;</code> (semicolon). The semicolon is also called the <strong>sequential composition</strong> operator. And it goes without saying that of course the statements are evaluated one after the other from the beginning to end, leaving no room for an “strategic decisions”. It’s just how a program is executed, from beginning to end, and there’s loops, then of course the running program starts at the beginning of the loop when reaching the end of the loop (if not exiting).</p>
 
-<p>Note incidentally, that at the current state of the lecture (in week 2) we have not even used composition in Scheme! In a purely functional language, it somehow makes no sense in explicitly programming to do ``first-this, then that’’. One does not specify the evaluation order, as mostly it does not matter, and where it matters to some extent, with procedure calls, the chosen evaluation strategy fixes the order. In Scheme, AO. Only somewhat later in week 6, when we introduce imperative feature, then there will be a need for sequential composition, and we will introduce the corresponding Scheme syntax: it will not be <code class="language-plaintext highlighter-rouge">;</code>, but, you may guessed it, an S-expression. They keyword is <code class="language-plaintext highlighter-rouge">begin</code>, which you may guessed also that, is a <strong>special form</strong>…</p>
+<p>Note incidentally, that at the current state of the lecture (in week 2) we have not even used composition in Scheme! In a purely functional language, it somehow makes no sense in explicitly programming to do “first-this, then that”. One does not specify the evaluation order, as mostly it does not matter, and where it matters to some extent, with procedure calls, the chosen evaluation strategy fixes the order. In Scheme, AO. Only somewhat later in week 6, when we introduce imperative feature, then there will be a need for sequential composition, and we will introduce the corresponding Scheme syntax: it will not be <code class="language-plaintext highlighter-rouge">;</code>, but, you may guessed it, an S-expression. They keyword is <code class="language-plaintext highlighter-rouge">begin</code>, which you may guessed also that, is a <strong>special form</strong>…</p>
 
 <p>Here is an example of some factorial in C, programmed very non-functional, and also doing input-output (something that we have not touched upon in Scheme).</p>
 
@@ -508,7 +508,7 @@
   
     <li>
       <a href="#2025">
-        <strong>2025</strong> <span class="taxonomy__count">2</span>
+        <strong>2025</strong> <span class="taxonomy__count">5</span>
       </a>
     </li>
   
@@ -520,6 +520,126 @@
   <section id="2025" class="taxonomy__section">
     <h2 class="archive__subtitle">2025</h2>
     <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/09/12/ackermann.html" rel="permalink">Recursion, primitive or otherwise
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          14 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A lesser known fact on Ackermann’s function, and the power of higher-order functions
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/09/05/processprocedure.html" rel="permalink">Processes and procedures
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">and functions too
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/09/01/bindingandscope.html" rel="permalink">What’s in a name?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Some fineprint on substitution
+</p>
+  </article>
+</div>
+
       
         
 
