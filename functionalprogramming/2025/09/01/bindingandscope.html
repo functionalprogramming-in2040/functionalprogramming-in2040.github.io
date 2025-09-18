@@ -1,0 +1,716 @@
+<!doctype html>
+<!--
+  Minimal Mistakes Jekyll Theme 4.24.0 by Michael Rose
+  Copyright 2013-2020 Michael Rose - mademistakes.com | @mmistakes
+  Free for personal and commercial use under the MIT license
+  https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
+-->
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="utf-8">
+
+<!-- begin _includes/seo.html --><title>What’s in a name? - IN2040 FP</title>
+<meta name="description" content="Some fineprint on substitution">
+
+
+  <meta name="author" content=" ">
+  
+  <meta property="article:author" content=" ">
+  
+
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="en_US">
+<meta property="og:site_name" content="IN2040 FP">
+<meta property="og:title" content="What’s in a name?">
+<meta property="og:url" content="/functionalprogramming/2025/09/01/bindingandscope.html">
+
+
+  <meta property="og:description" content="Some fineprint on substitution">
+
+
+
+  <meta property="og:image" content="/static/assets/images/sicp-scale.jpg">
+
+
+
+
+
+  <meta property="article:published_time" content="2025-09-01T00:00:00+02:00">
+
+
+
+  <meta property="article:modified_time" content="2024-09-03T16:06:00+02:00">
+
+
+
+
+<link rel="canonical" href="/functionalprogramming/2025/09/01/bindingandscope.html">
+
+
+
+
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    
+      "@type": "Person",
+      "name": null,
+      "url": "/"
+    
+  }
+</script>
+
+
+
+
+
+
+
+<!-- end _includes/seo.html -->
+
+
+
+  <link href="/feed.xml" type="application/atom+xml" rel="alternate" title="IN2040 FP Feed">
+
+
+<!-- https://t.co/dKP3o1e -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script>
+  document.documentElement.className = document.documentElement.className.replace(/\bno-js\b/g, '') + ' js ';
+</script>
+
+<!-- For all browsers -->
+<link rel="stylesheet" href="/assets/css/main.css">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5/css/all.min.css"></noscript>
+
+
+
+    <!-- start custom head snippets -->
+
+<!-- insert favicons. use https://realfavicongenerator.net/ -->
+
+<!-- end custom head snippets -->
+
+  </head>
+
+  <body class="layout--posts">
+    <nav class="skip-links">
+  <ul>
+    <li><a href="#site-nav" class="screen-reader-shortcut">Skip to primary navigation</a></li>
+    <li><a href="#main" class="screen-reader-shortcut">Skip to content</a></li>
+    <li><a href="#footer" class="screen-reader-shortcut">Skip to footer</a></li>
+  </ul>
+</nav>
+
+    <!--[if lt IE 9]>
+<div class="notice--danger align-center" style="margin: 0;">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience.</div>
+<![endif]-->
+
+    
+
+<div class="masthead">
+  <div class="masthead__inner-wrap">
+    <div class="masthead__menu">
+      <nav id="site-nav" class="greedy-nav">
+        
+        <a class="site-title" href="/">
+          IN2040 FP
+          
+        </a>
+        <ul class="visible-links"><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/lectures">lectures</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/coursework">coursework</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/overview">overview</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/menu/blog">blog</a>
+            </li><li class="masthead__menu-item">
+              <a href="/teaching/fp/sitemap/">sitemap</a>
+            </li></ul>
+        
+        <button class="greedy-nav__toggle hidden" type="button">
+          <span class="visually-hidden">Toggle menu</span>
+          <div class="navicon"></div>
+        </button>
+        <ul class="hidden-links hidden"></ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+
+    <div class="initial-content">
+      
+  
+
+
+
+
+
+
+
+<div class="page__hero--overlay"
+  style="background-color: #f57f17; background-image: linear-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.01)), url('/static/assets/images/sicp-scale.jpg');"
+>
+  
+    <div class="wrapper">
+      <h1 id="page-title" class="page__title" itemprop="headline">
+        
+          What’s in a name?
+
+        
+      </h1>
+      
+        <p class="page__lead">Some fineprint on substitution
+</p>
+      
+      
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+      
+      
+    </div>
+  
+  
+</div>
+
+
+
+
+
+<div id="main" role="main">
+  
+  <div class="sidebar sticky">
+  
+
+
+<div itemscope itemtype="https://schema.org/Person">
+
+  
+
+  <div class="author__content">
+    
+      <h3 class="author__name" itemprop="name"> </h3>
+    
+    
+      <div class="author__bio" itemprop="description">
+        
+
+      </div>
+    
+  </div>
+
+  <div class="author__urls-wrapper">
+    <button class="btn btn--inverse">Follow</button>
+    <ul class="author__urls social-icons">
+      
+        <li itemprop="homeLocation" itemscope itemtype="https://schema.org/Place">
+          <i class="fas fa-fw fa-map-marker-alt" aria-hidden="true"></i> <span itemprop="name">UiO, IFI</span>
+        </li>
+      
+
+      
+        
+          
+            <li><a href="https://www.uio.no/studier/emner/matnat/ifi/IN2040/" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-link" aria-hidden="true"></i><span class="label">home</span></a></li>
+          
+        
+          
+            <li><a href="mailto:in2040-hjelp@ifi.uio.no" rel="nofollow noopener noreferrer"><i class="fas fa-fw fa-envelope-square" aria-hidden="true"></i><span class="label">email</span></a></li>
+          
+        
+          
+            <li><a href="https://github.uio.no/IN2040/h24" rel="nofollow noopener noreferrer"><i class="fab fa-fw fa-github" aria-hidden="true"></i><span class="label">github (for group work)</span></a></li>
+          
+        
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      <!--
+  <li>
+    <a href="http://link-to-whatever-social-network.com/user/" itemprop="sameAs" rel="nofollow noopener noreferrer">
+      <i class="fas fa-fw" aria-hidden="true"></i> Custom Social Profile Link
+    </a>
+  </li>
+-->
+    </ul>
+  </div>
+</div>
+
+  
+  </div>
+
+
+
+  <div class="archive">
+    
+    <p>In the break during the lecture in week 2, a question came up from the audience asking for more information and explanations in connection with some slide titled “Anecdote”. Discussed at (and around) that slide are formal parameters, <strong>free</strong> and <strong>bound</strong> variables, and the notion of <strong>scope</strong>. The slides state that the choice of names for variables is arbitrary, and it was mentioned that Scheme gives the user great freedom in what one can use as “name”.</p>
+
+<p>Let’s recap some of the points on the slides here (with a mildly different example). Assume the following piece of code:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">n</span> <span class="mi">42</span><span class="p">)</span>            <span class="c1">;; define a number</span>
+<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">x</span> <span class="nv">n</span><span class="p">))</span>   <span class="c1">;; function increases input by 42!</span>
+</code></pre></div></div>
+
+<p>Scheme would allow <code class="language-plaintext highlighter-rouge">*</code> as name of a formal parameter instead of <code class="language-plaintext highlighter-rouge">x</code>:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">n</span> <span class="mi">42</span><span class="p">)</span>            <span class="c1">;; define a number</span>
+<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">*</span><span class="p">)</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">*</span> <span class="nv">n</span><span class="p">))</span>   <span class="c1">;; same function,</span>
+                         <span class="c1">;; but with idiotic formal parameter</span>
+</code></pre></div></div>
+
+<p>It’s a confusing choice, for sure, and one should not do it.</p>
+
+<h1 id="variable-capture">Variable capture</h1>
+
+<p>Things escalate from “confusing” to “wrong” if one would rename <code class="language-plaintext highlighter-rouge">x</code> to <code class="language-plaintext highlighter-rouge">n</code>, not to <code class="language-plaintext highlighter-rouge">*</code>:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">n</span> <span class="mi">42</span><span class="p">)</span>            <span class="c1">;; define a number</span>
+<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">n</span><span class="p">)</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">n</span> <span class="nv">n</span><span class="p">))</span>   <span class="c1">;; function doubles its input!</span>
+</code></pre></div></div>
+
+<p>With this renaming, the function <code class="language-plaintext highlighter-rouge">f</code> now implements <strong>doubling</strong> its input, no longer increasing it by $42$. What went wrong here is that one overlooked that <code class="language-plaintext highlighter-rouge">n</code> is already mentioned in the body; it originally occurs <strong>free</strong> in the body and is bound by a definition outside the body. After carelessly renaming <code class="language-plaintext highlighter-rouge">x</code> to <code class="language-plaintext highlighter-rouge">n</code>, however, the variable will no longer be free, it will have become a bound variable. This is called <strong>variable capture</strong>. As a consequence: the choice of variable names does not matter, only up-to a point. Renaming formal parameters that lead to variable capture <strong>changes</strong> what the program means.</p>
+
+<p>Actually, all what’s been said so far should be known from the lecture, and that’s not what this post is about, it’s just the starting point. Indeed, there’s <strong>more</strong> to the issue of renaming, and that probably was the student’s question or at least related to it. What follows is <strong>not</strong> discussed on the slides.</p>
+
+<h1 id="hidden-name-capture">Hidden name “capture”?</h1>
+
+<p>Variable capture is the effect that renaming changes the status from a variable name from being “free” to being “bound”. That renaming is the programmer’s fault who carelessly edits (= <strong>rewrites</strong>) the program text manually. But one could wonder whether there are <strong>other ways</strong> by which a previously free variable name comes under the “influence” of a binder</p>
+
+<p>And indeed, there are situations that look dangerous in this respect, and that is actual topic of this post. It’s a consequence of two aspects: first, procedures can contain in their body free variables; that was already part of the previous “variable capture” example (<code class="language-plaintext highlighter-rouge">n</code> was first free inside <code class="language-plaintext highlighter-rouge">f</code>, before becoming captured by stupidly renaming the formal parameter to <code class="language-plaintext highlighter-rouge">n</code>). The second aspect is that procedures or functions can “move” in a way: Scheme is a programming language supporting <strong>higher-order</strong> functions, which means that a procedure can be handed over as <strong>argument</strong> to another function, or <strong>returned from</strong> as result from a function. Handing over an argument to a function, i.e., by way of <strong>parameter passing</strong> can be seen as “moving” it into callee’s body. That analogy is in particular visible in the <strong>substitution model</strong>, which explains execution or evaluation as a sequence of substitutions or as <strong>rewriting</strong>. Rewriting the code is, of course, done by the interpreter or evaluator, not by a silly user who rewrites the code by changing variable names. In all fairness, interpreting a functional program is mostly not directly implemented by transforming literal source code, especially not the string of input text. That would be too inefficient. That’s why it’s not called not substitution <strong>implementation</strong> or substitution <strong>technique</strong>, but a substitution <strong>model</strong>, and the model gives a correct conceptual explanation of what’s going on.</p>
+
+<p>Let’s look at the above example again. Note that procedures or functions (i.e., lambda expressions) are <strong>values</strong>:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">x</span><span class="p">)</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">x</span> <span class="nv">n</span><span class="p">))</span>  
+</code></pre></div></div>
+
+<p>The name or variable <code class="language-plaintext highlighter-rouge">f</code> is bound to <code class="language-plaintext highlighter-rouge">(lambda (x) (+ x n))</code>, which counts as <strong>value</strong> despite the fact that <code class="language-plaintext highlighter-rouge">n</code> is unresolved, i.e., <code class="language-plaintext highlighter-rouge">n</code> is not a value.</p>
+
+<p>If we would apply some (higher-order) function <code class="language-plaintext highlighter-rouge">g</code> to <code class="language-plaintext highlighter-rouge">f</code>, executing <code class="language-plaintext highlighter-rouge">(g f)</code>, <strong>applicative order</strong> would evaluate <code class="language-plaintext highlighter-rouge">f</code> into the above lambda-expression (and <code class="language-plaintext highlighter-rouge">g</code> would have to be resolved as well). But, as said, <code class="language-plaintext highlighter-rouge">(lambda (x) (+ x n))</code> <strong>is a value</strong>, and would be handed over by parameter passing: being a value already, applicative order would <strong>not</strong> go on evaluating it for example by replacing <code class="language-plaintext highlighter-rouge">n</code> by <code class="language-plaintext highlighter-rouge">42</code> (neither would normal-order evaluation).</p>
+
+<p>You may think, that’s weird: if something is called <strong>eager</strong> evaluation, one would expect that maybe also <code class="language-plaintext highlighter-rouge">n</code> in the body of <code class="language-plaintext highlighter-rouge">f</code> should be impatiently evaluated when defining <code class="language-plaintext highlighter-rouge">f</code>. But actually, that’s not done and it’s common in all programming languages. <strong>Defining</strong> a procedure, method, function or whatever <strong>does not trigger executing its body</strong> (even if it sometimes were possible to evaluate parts of it). It’s not that it’s never done, but executing code before the code is actually “activated” (like when actually <strong>calling</strong> a function with arguments) is called <strong>pre-computation</strong> and is an <strong>optimization technique</strong> used by some compilers. In an imperative setting, one would have to analyze if pre-computation is even meaningful. It’s possible if calculating some parts up-front gives the same result than not doing it (which is the case if one can establish the the pre-computed result would never change later on. In an imperative setting that could be possible, that’s why an analysis would be required. In a purely functional language, there is no danger of that, but still it’s standard to consider $\lambda$-expressions as evaluated, even if they contain unevaluated sub-expressions (and Scheme is not purely functional).</p>
+
+<p>Now, in a situation as from the example above, when handing over <code class="language-plaintext highlighter-rouge">f</code> to some procedure, the (as yet unevaluated) <code class="language-plaintext highlighter-rouge">n</code> maybe end up inside another scope which by some coincidence binds <code class="language-plaintext highlighter-rouge">n</code>. So now it’s not that a manual stupid renaming leads to capture, but a free variable is “moved” into some scope, when running the code. And note, maybe the programmer who uses <code class="language-plaintext highlighter-rouge">g</code> when calling it with <code class="language-plaintext highlighter-rouge">f</code> as argument by writing <code class="language-plaintext highlighter-rouge">(g f)</code> does not <strong>know</strong> what (if any) local scope is used inside <code class="language-plaintext highlighter-rouge">g</code>. After all, it is better if <code class="language-plaintext highlighter-rouge">g</code> could be treated as <strong>black box</strong>: one should know what <code class="language-plaintext highlighter-rouge">g</code> is supposed to do, but not how it’s <strong>implemented</strong> and in particular not which variables the programmer of <code class="language-plaintext highlighter-rouge">g</code> has introduced locally. It’s laughable to try to play it safe and avoid variables like <code class="language-plaintext highlighter-rouge">x</code>, <code class="language-plaintext highlighter-rouge">y</code>, <code class="language-plaintext highlighter-rouge">n</code> (and opting for <code class="language-plaintext highlighter-rouge">xxxxx</code> and <code class="language-plaintext highlighter-rouge">yyyyy</code>, <code class="language-plaintext highlighter-rouge">nnnnn</code> instead) speculating that they are popular and are in high danger of being captured … Not much better is to require the user of procedures (for instance when using library functions) to read though the implementation of the used functions to make sure that no captures would occur. And maybe the source code of the (library) function is not even available.</p>
+
+<p>To make the discussion more concrete again, let’s look at an example (and let’s use strings for a change, not numbers):</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">message</span>  <span class="s">"\nLive long and prosper"</span><span class="p">)</span>  
+<span class="p">(</span><span class="k">define</span> <span class="nv">sendmessage</span> <span class="c1">;; proc. that returns "message"</span>
+  <span class="p">(</span><span class="k">lambda</span> <span class="p">()</span>   <span class="nv">message</span><span class="p">))</span>    
+
+<span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">sendtailormademessage</span> <span class="nv">f</span> <span class="nv">name</span><span class="p">)</span>    
+  <span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">message</span> <span class="s">" What's up"</span><span class="p">))</span> <span class="c1">;; local "re"-definition</span>
+    <span class="p">(</span><span class="k">begin</span> <span class="p">(</span><span class="nb">display</span> <span class="p">(</span><span class="nf">f</span><span class="p">))</span>
+	   <span class="p">(</span><span class="nb">display</span> <span class="s">", "</span><span class="p">)</span>
+	   <span class="p">(</span><span class="nb">display</span> <span class="nv">name</span><span class="p">)</span>
+	   <span class="p">(</span><span class="nb">display</span> <span class="s">", "</span><span class="p">)</span>
+	   <span class="p">(</span><span class="nb">display</span> <span class="nv">message</span><span class="p">)</span>
+	   <span class="p">(</span><span class="nb">display</span> <span class="s">"\n"</span><span class="p">))))</span>
+
+<span class="p">(</span><span class="nf">sendtailormademessage</span> <span class="nv">sendmessage</span> <span class="s">"stranger"</span><span class="p">)</span> <span class="c1">;;; </span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">message</code> is a variable containing a string, which is used inside the procedure <code class="language-plaintext highlighter-rouge">sendmessage</code> but defined outside it. Actually, the program introduces <code class="language-plaintext highlighter-rouge">message</code> twice, once at the beginning and afterwards <strong>inside</strong> the higher-order procedure <code class="language-plaintext highlighter-rouge">sendtailormademessage</code>. The second time the name <code class="language-plaintext highlighter-rouge">message</code> is introduced via <code class="language-plaintext highlighter-rouge">let</code> (which is responsible to a scope for <code class="language-plaintext highlighter-rouge">message</code> which is nested <code class="language-plaintext highlighter-rouge">inside</code> the body of the procedure <code class="language-plaintext highlighter-rouge">sendtailormademessage</code>). It’s inside this nested scope that <code class="language-plaintext highlighter-rouge">sendmessage</code> ends up if we substitute it when calling <code class="language-plaintext highlighter-rouge">sendtailormademessage</code> in the last line of the example, and with it also the name <code class="language-plaintext highlighter-rouge">message</code> ends up there. Let binds variables the same way that formal parameter of a procedure binds variables. We could have written analogous examples with procedures, without let (which comes later in the lecture), but this way it’s a bit shorter or readable.</p>
+
+<p>Now if we substitute <code class="language-plaintext highlighter-rouge">sendmessage</code> <strong>literally</strong> into the body of <code class="language-plaintext highlighter-rouge">sendtailormademessage</code>, <code class="language-plaintext highlighter-rouge">message</code> would end up inside the <code class="language-plaintext highlighter-rouge">let</code>-binding for <code class="language-plaintext highlighter-rouge">message</code> inside, it would be <strong>captured</strong>:</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">message</span>  <span class="s">"\nLive long and prosper"</span><span class="p">)</span> <span class="c1">;; some string</span>
+<span class="o">.....</span>
+<span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">message</span> <span class="s">"\nWhat's up"</span><span class="p">))</span> 
+  <span class="p">(</span><span class="k">begin</span> <span class="p">(</span><span class="nb">display</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">()</span>   <span class="nv">message</span><span class="p">)))</span>  
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">", "</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">"stranger"</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">", "</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nf">diplay</span> <span class="nv">message</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">"\n"</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>If that happened, the output would be</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>What's up, stranger, What's up
+</code></pre></div></div>
+
+<p>However, if you test the program in Scheme, the output is something else:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Live long and prosper, stranger,  What's up
+</code></pre></div></div>
+
+<p>I.e., the when substituting <code class="language-plaintext highlighter-rouge">sendmessage</code> for <code class="language-plaintext highlighter-rouge">f</code>, the code is not really “textually” copied in. It’s done smarter, and a way of explaining it is that the substitution result is</p>
+
+<div class="language-scheme highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">define</span> <span class="nv">message</span>  <span class="s">"\nLive long and prosper"</span><span class="p">)</span> <span class="c1">;; some string</span>
+<span class="o">.....</span>
+<span class="p">(</span><span class="k">let</span> <span class="p">((</span><span class="nf">message_new</span> <span class="s">"\nWhat's up"</span><span class="p">))</span> 
+  <span class="p">(</span><span class="k">begin</span> <span class="p">(</span><span class="nb">display</span> <span class="p">((</span><span class="k">lambda</span> <span class="p">()</span>   <span class="nv">message</span><span class="p">)))</span>  
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">", "</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">"stranger"</span><span class="p">)</span>
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">", "</span><span class="p">)</span>	 
+	 <span class="p">(</span><span class="nb">display</span> <span class="nv">message_new</span><span class="p">)</span>	 
+	 <span class="p">(</span><span class="nb">display</span> <span class="s">"\n"</span><span class="p">))))</span>
+</code></pre></div></div>
+
+<p>The original let-bound local variable <code class="language-plaintext highlighter-rouge">message</code> is silently <strong>renamed</strong> to, say, <code class="language-plaintext highlighter-rouge">message_new</code> and consistently, it’s now <code class="language-plaintext highlighter-rouge">(display message_new)</code> towards the end. One can imagine that instead of using “dumb substitution”, the substitution model is based on what is known as <strong>capture-avoiding substitution</strong>. That is what is meant in the headline when writing <em>“fine print on substitution”</em>.</p>
+
+<p>The alternative, namely that <code class="language-plaintext highlighter-rouge">message</code> is in fact captured also exists. It’s called <strong>dynamic scoping</strong> as opposed to the correct version, which is called <strong>static scoping</strong> or <strong>lexical scoping</strong> (and “dumb” and “capture-avoiding” substitution are explanations of how both work in a purely functional setting). There exist languages which use dynamic bindings, $\LaTeX$ is one, and earlier versions of Lisp. Scheme was the first Lisp variant based in lexical scoping, earlier ones used dynamic scoping, and some continued with that, though static scoping is now one option or even the default for many emacs version. Lexical scoping is also the standard for most languages.</p>
+
+<p>Why was dynamic scoping the method of choice in older versions of Lisp supporting and not lexical? One must not forget that Lisp was a seriously pioneering language (with higher-order functions, garbage collection etc) at a time where people only started to “understand” high-level languages, the techniques required to implement such abstractions (and not work very close to the hardware) and, last not least, work with seriously restricted memory. Now, the message-example used to illustrate the issue is fairly simple; the variable <code class="language-plaintext highlighter-rouge">message</code> contains a string, which Scheme handles via lexical binding. One could make analogous examples the variable that is treated either statically/lexically or dynamically refers to a function. After all, we have a functional language, functions are first-class citizens, and rules for strings as data apply for functions as data in the same way.</p>
+
+<p>It turns out that dynamic scoping, especially for functions, is considerable easier than lexical scoping. Already in the purely functional setting, one has the feeling that “dumb” substitution seems easier than capture avoiding substitution (though concrete implementations are not directly based on text-manipulations, dumb or otherwise, especially compilers can’t do that).</p>
+
+<p>Later Lisp/Scheme version were not purely functional, so an implementation directly based on some form of substitution is not even an option. But lexical scoping with higher-order functions requires to handle rather more complex data-structures at run-time (the so-called run-time environment), as is the case for dynamic binding (or the case for languages without higher-order procedures. Later we discuss the so-called <strong>environment model</strong> (which realizes lexical scoping and which replaces or generalizes the simple substitution model when one integrates side-effects), and what is needed are so-called <strong>closures</strong> (though the book does not use the word). And the more complex run-time environments and the closures may lead to higher memory usage plus degrading performance. In short, the time (and the knowledge, technology and hardware) may not yet have been ripe for higher-order functions + lexical scoping. Actually, John McCarthy in his 1979 paper “History of Lisp” even goes so far as characterizing dynamic scoping as bug, when describing an early Lisp implementation:</p>
+
+<blockquote>
+  <p>.. In modern terminology, lexical scoping was wanted, and dynamic scoping was obtained. I must confess, I regarded this difficulty as just a bug and expressed confidence that Steve Russel would soon fix it…</p>
+</blockquote>
+
+
+<ul class="taxonomy__index">
+  
+  
+    <li>
+      <a href="#2025">
+        <strong>2025</strong> <span class="taxonomy__count">5</span>
+      </a>
+    </li>
+  
+</ul>
+
+
+
+
+  <section id="2025" class="taxonomy__section">
+    <h2 class="archive__subtitle">2025</h2>
+    <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/09/12/ackermann.html" rel="permalink">Recursion, primitive or otherwise
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          14 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A lesser known fact on Ackermann’s function, and the power of higher-order functions
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/09/05/processprocedure.html" rel="permalink">Processes and procedures
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">and functions too
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/09/01/bindingandscope.html" rel="permalink">What’s in a name?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          10 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">Some fineprint on substitution
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/08/22/evaluationstrategies.html" rel="permalink">Evaluation strategies
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          18 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/05/01/fpwelcome-2025.html" rel="permalink">Welcome to Functional programming (IN2040), autumn 2025
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          2 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">
+</p>
+  </article>
+</div>
+
+      
+    </div>
+    <a href="#page-title" class="back-to-top">Back to Top &uarr;</a>
+  </section>
+
+
+  </div>
+</div>
+    </div>
+
+    
+
+    <div id="footer" class="page__footer">
+      <footer>
+        <!-- start custom footer snippets -->
+
+<!-- end custom footer snippets -->
+        <div class="page__footer-follow">
+  <ul class="social-icons">
+    
+
+    
+
+    
+      <li><a href="/feed.xml"><i class="fas fa-fw fa-rss-square" aria-hidden="true"></i> Feed</a></li>
+    
+  </ul>
+</div>
+
+<div class="page__footer-copyright">&copy; 2025 IN2040 FP. Powered by <a href="https://jekyllrb.com" rel="nofollow">Jekyll</a> &amp; <a href="https://mademistakes.com/work/minimal-mistakes-jekyll-theme/" rel="nofollow">Minimal Mistakes</a>.</div>
+
+      </footer>
+    </div>
+
+    
+  <script src="/assets/js/main.min.js"></script>
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" async
+	src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-MML-AM_CHTML">
+</script>
+
+<script type="text/x-mathjax-config">
+   MathJax.Hub.Config({
+     extensions: ["tex2jax.js"],
+     jax: ["input/TeX", "output/HTML-CSS"],
+     tex2jax: {
+       inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+       displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+       processEscapes: true
+     },
+     "HTML-CSS": { availableFonts: ["TeX"] }
+   });
+</script>
+
+
+  </body>
+</html>
