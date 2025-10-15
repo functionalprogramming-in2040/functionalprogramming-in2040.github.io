@@ -313,7 +313,7 @@
 
   <div class="archive">
     
-    <p>In the break during the lecture in week 2, a question came up from the audience asking for more information and explanations in connection with some slide titled “Anecdote”. Discussed at (and around) that slide are formal parameters, <strong>free</strong> and <strong>bound</strong> variables, and the notion of <strong>scope</strong>. The slides state that the choice of names for variables is arbitrary, and it was mentioned that Scheme gives the user great freedom in what one can use as “name”.</p>
+    <p>In the lecture in week 2 in 2024, a question came up from the audience asking for more information and explanations in connection with some slide titled “Anecdote”. Discussed at (and around) that slide are formal parameters, <strong>free</strong> and <strong>bound</strong> variables, and the notion of <strong>scope</strong>. The slides state that the choice of names for variables is arbitrary, and it was mentioned that Scheme gives the user great freedom in what one can use as “name”.</p>
 
 <p>Let’s recap some of the points on the slides here (with a mildly different example). Assume the following piece of code:</p>
 
@@ -328,7 +328,7 @@
                          <span class="c1">;; but with idiotic formal parameter</span>
 </code></pre></div></div>
 
-<p>It’s a confusing choice, for sure, and one should not do it.</p>
+<p>It’s a confusing choice, for sure, and one should definitely not do it.</p>
 
 <h1 id="variable-capture">Variable capture</h1>
 
@@ -338,7 +338,7 @@
 <span class="p">(</span><span class="k">define</span> <span class="p">(</span><span class="nf">f</span> <span class="nv">n</span><span class="p">)</span> <span class="p">(</span><span class="nb">+</span> <span class="nv">n</span> <span class="nv">n</span><span class="p">))</span>   <span class="c1">;; function doubles its input!</span>
 </code></pre></div></div>
 
-<p>With this renaming, the function <code class="language-plaintext highlighter-rouge">f</code> now implements <strong>doubling</strong> its input, no longer increasing it by $42$. What went wrong here is that one overlooked that <code class="language-plaintext highlighter-rouge">n</code> is already mentioned in the body; it originally occurs <strong>free</strong> in the body and is bound by a definition outside the body. After carelessly renaming <code class="language-plaintext highlighter-rouge">x</code> to <code class="language-plaintext highlighter-rouge">n</code>, however, the variable will no longer be free, it will have become a bound variable. This is called <strong>variable capture</strong>. As a consequence: the choice of variable names does not matter, only up-to a point. Renaming formal parameters that lead to variable capture <strong>changes</strong> what the program means.</p>
+<p>With this renaming, the function <code class="language-plaintext highlighter-rouge">f</code> now implements <strong>doubling</strong> its input, no longer increasing it by 42. What went wrong here is that one overlooked that <code class="language-plaintext highlighter-rouge">n</code> is already mentioned in the body; it originally occurs <strong>free</strong> in the body and is bound by a definition outside the body. After carelessly renaming <code class="language-plaintext highlighter-rouge">x</code> to <code class="language-plaintext highlighter-rouge">n</code>, however, the variable will no longer be free, it will have become a bound variable. This is called <strong>variable capture</strong>. As a consequence: the choice of variable names does not matter, only up-to a point. Renaming formal parameters that lead to variable capture <strong>changes</strong> what the program means.</p>
 
 <p>Actually, all what’s been said so far should be known from the lecture, and that’s not what this post is about, it’s just the starting point. Indeed, there’s <strong>more</strong> to the issue of renaming, and that probably was the student’s question or at least related to it. What follows is <strong>not</strong> discussed on the slides.</p>
 
@@ -437,7 +437,7 @@
   
     <li>
       <a href="#2025">
-        <strong>2025</strong> <span class="taxonomy__count">5</span>
+        <strong>2025</strong> <span class="taxonomy__count">7</span>
       </a>
     </li>
   
@@ -449,6 +449,86 @@
   <section id="2025" class="taxonomy__section">
     <h2 class="archive__subtitle">2025</h2>
     <div class="entries-list">
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/10/15/ycombinator.html" rel="permalink">Y Y?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          17 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">or why Y?
+</p>
+  </article>
+</div>
+
+      
+        
+
+
+
+<div class="list__item">
+  <article class="archive__item" itemscope itemtype="https://schema.org/CreativeWork">
+    
+    <h2 class="archive__item-title no_toc" itemprop="headline">
+      
+        <a href="/functionalprogramming/2025/10/15/churchnums.html" rel="permalink">Y not code up $n!$ with no recursion and no Y tricks either?
+</a>
+      
+    </h2>
+    
+
+  <p class="page__meta">
+    
+
+    
+
+    
+      
+      
+
+      <span class="page__meta-readtime">
+        <i class="far fa-clock" aria-hidden="true"></i>
+        
+          27 minute read
+        
+      </span>
+    
+  </p>
+
+
+    <p class="archive__item-excerpt" itemprop="description">A glance at Church numerals, inductive data types, and pattern matching
+</p>
+  </article>
+</div>
+
       
         
 
